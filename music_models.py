@@ -35,11 +35,35 @@ class Key:
         else : 
             self.base_notes = base_notes
         self.notes = [x for x in notes_list if x[:-1] in self.base_notes]
-        
-    def generate_note(self, note_pivot, note_radius = 7):
+
+    #This function generates a note regarding the note_pivot it is given. 
+    #A pivot is required so the notes chosen aren't just completely arbitrary, and so with a given pivot and radius, the generator will pick notes relatively close to each other. 
+    #The bias_same_note is an int argument <100 that is a probability for the generator to choose the same note as the pivot. If using the note_timing module, notes with the same value are squished together, which is basically how you get notes of varying length.         
+    def generate_note(self, note_pivot, note_radius = 7, bias_same_note = 0):
+        if random.randint(0, 100) < bias_same_note : 
+            return note_pivot
         pivot_index = self.notes.index(note_pivot)
         note_index = random.randint(max(0, pivot_index - note_radius), min(pivot_index + note_radius, len(self.notes)-1))
         return self.notes[note_index]
+
+#A bar is a class containing several notes. The class is mainly used to accent notes. 
+#The accent_notes function receives a dictionary as an argument, but the user can manually set the accents property. 
+#The accents is a dictionary that looks like {1 : 100, 3 : 80}, where the key is the note that is accented, and the value is the volume. This accenting dictionary will make the first note with the highest volume, and the 3rd with 80% of the highest volume. 
+#All other notes use the default value used in the constructor. 
+class Bar:
+    def __init__(self, notes, accents = {}, default_volume = 50):
+        self.notes = notes
+        for note in self.notes : note.volume = default_volume
+        self.accents = accents
+        if accents : self.accent_notes(accents)
+        
+    def accent_notes(self, accents = {}):
+        if not self.accents : self.accents = accents
+        for accent in accents:
+            try:
+                self.notes[accent].volume = accents[accent]
+            except Exception:
+                pass
         
 def main():
     a = Key('B', 'minor')

@@ -1,26 +1,15 @@
 from midiutil.MidiFile import MIDIFile
-import music_models, argparse, random
+import music_models, argparse, random, note_timing
 
-def gen_notes_for_key(number_notes, key = 'A', scale = 'minor', time = 0, duration = 1):
+def gen_notes_for_key(number_notes, key = 'A', scale = 'minor', time = 0, duration = 1, bias_same_note = 0):
     k = music_models.Key(key, scale)
     prev_note = random.choice(k.notes)
     notes = []
     while number_notes>0:
         notes.append(music_models.Note(note = prev_note, time = time, duration = duration, volume = 100)) 
-        prev_note = k.generate_note(prev_note, 7)
+        prev_note = k.generate_note(prev_note, 7, bias_same_note)
         number_notes -= 1 
     return notes
-
-
-def gen_note(prev_note = None, t=0, d=1, diffs = []):
-    if prev_note:
-        if not diffs : 
-            diffs = [i for i in [-12, -11, -9, -7, -5, -4, -2, 0, 2, 4, 5, 7, 9, 11, 12] if prev_note.pitch-21-i > 0 and i+prev_note.pitch-21 <len(music_models.notes_list)-1]
-        r_note = music_models.notes_list[prev_note.pitch - 21 + random.choice(diffs)]
-    else:
-        r_note=random.choice(music_models.notes_list)
-    print r_note
-    return music_models.Note(note = r_note, time = t, duration = d, volume = 100)
 
 def main():
 
@@ -39,14 +28,13 @@ def main():
 
     mid = MIDIFile(1)
     mid.addTrackName(0, 0, 'Sample')
-#    prev_note = gen_note()
-    t = 0
-    gen_notes_for_key(50)
-#    while n_notes:
-#        mid.addNote(*prev_note.get_values())
-#        prev_note = gen_note(prev_note=prev_note, t=t, d=1)
-#        n_notes -= 1
-#        t += 1
+    notes = gen_notes_for_key(50, bias_same_note = 40)
+    entire_track = note_timing.group_notes_for_time_signature(notes, '7/8', 120, bias_separate_notes = 50, accents = {0 : 100, 2 : 80})
+    print [[(note.pitch, note.length, note.volume, note.time) for note in bar.notes] for bar in entire_track]
+    
+    for bar in entire_track: 
+        for note in bar.notes:
+            mid.addNote(*note.get_values())
 
     binfile = open(output, 'wb')
     mid.writeFile(binfile)
