@@ -38,8 +38,8 @@ class Key:
 
     #This function generates a note regarding the note_pivot it is given. 
     #A pivot is required so the notes chosen aren't just completely arbitrary, and so with a given pivot and radius, the generator will pick notes relatively close to each other. 
-    #The bias_same_note is an int argument <100 that is a probability for the generator to choose the same note as the pivot. If using the note_timing module, notes with the same value are squished together, which is basically how you get notes of varying length.         
-    def generate_note(self, note_pivot, note_radius = 7, bias_same_note = 0):
+    #The bias_same_note is an int argument <100 that is a probability for the generator to choose the same note as the pivot. If using the note_timing module, notes with the same value are squished together, which is basically how you get notes of varying length. 
+    def generate_note(self, note_pivot, note_radius = 3, bias_same_note = 0):
         if random.randint(0, 100) < bias_same_note : 
             return note_pivot
         pivot_index = self.notes.index(note_pivot)
