@@ -1,4 +1,7 @@
 *~
 *pyc
 *.mid
+*.wav
 songs/
+*.JSON
+*.json

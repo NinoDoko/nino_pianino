@@ -2,19 +2,24 @@ import itertools, random
 
 base_notes = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#']
 notes_list = [x + y for y in  [str(i) for i in range(8)] for x in base_notes]
+pitch_offset = 21
+
+def get_pitch(note):
+    return notes_list.index(note) + pitch_offset
 
 #Note class; mostly used to add data to a midi file. 
 class Note:
     def __init__(self, track = 0, channel = 0, note = 'A0', time = 0, duration = 0, volume = 0):
         self.track = track
         self.channel = channel
-        self.pitch = notes_list.index(note) + 21
+        self.pitch = get_pitch(note)
         self.time = time
         self.duration = duration
         self.volume = volume
 
     def get_values(self):
         return self.track, self.channel, self.pitch, self.time, self.duration, self.volume
+        
 
 #The key class offers functionality relating to generating random notes based off of some rules. 
 #The key argument is what the root note of the key is, for instance, the note A. This argument can be ommited if using the base_notes argument. 
