@@ -13,6 +13,13 @@ def gen_notes_for_key(track, number_notes, key = 'A', scale = 'minor', duration 
         number_notes -= 1 
     return notes
 
+def calculate_number_of_notes(block):
+    if block.get('number_of_notes'): return block['number_of_notes']
+    elif block.get('number_of_bars'): return block['number_of_bars'] * int(block['time_signature'].split('/')[0])
+    elif block.get('note_length'): return block['bpm']/60 * block['note_length']
+    elif block.get('block_length'): return block['block_length'] / (1.0 / (block['bpm']/60))
+    else: raise Exception('There was an error calculating the number of notes in block ', block.get('name'))
+
 def main():
 
     parser = argparse.ArgumentParser(description="Basic arguments")
@@ -24,23 +31,26 @@ def main():
     parser.add_argument('--input', help = 'Path for input JSON file. ', default = 'input.JSON')
 
     args = parser.parse_args()
-    print args.input
     n_notes = args.number_notes
     duration_max = args.notes_duration_range_max
     duration_min = args.notes_duration_range_min
     output = args.output
-    mid = MIDIFile(1)
     blocks = json.loads(open(args.input, 'r').read())
+    
+    no_tracks = max([b['track'] for b in blocks]) + 1
+    mid = MIDIFile(no_tracks)
     
     for b in blocks:
         mid.addTrackName(b['track'], b['play_at'][0], 'track_name')
-        number_of_notes = b['number_of_bars'] * int(b['time_signature'].split('/')[0])
+        mid.addTempo(b['track'], b['play_at'][0], b['bpm'])
+        number_of_notes = calculate_number_of_notes(b)
         generic_notes = gen_notes_for_key(b['track'], number_of_notes, key = b['key'], scale = b['scale'], bias_same_note = b['bias_same_note'], high_end = b['high_end'], low_end = b['low_end'])
         entire_track = []
         for starting_point in b['play_at']: 
             ungrouped_notes = copy.deepcopy(generic_notes)
-            accents = {int(x):b['accents'][x] for x in b['accents']}
-            print accents
+            if b.get('accents') : 
+                accents = {int(x):b['accents'][x] for x in b['accents']}
+            else : accents = {}
             grouped_notes = note_timing.group_notes_for_time_signature(ungrouped_notes, b['time_signature'], b['bpm'], b['bias_separate_notes'], accents, start_at = starting_point)
             entire_track += grouped_notes
 #        print [[(note.pitch, note.length, note.volume, note.time) for note in bar.notes] for bar in entire_track] ,'\n\n\n'

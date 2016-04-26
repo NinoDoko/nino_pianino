@@ -3,5 +3,6 @@
 *.mid
 *.wav
 songs/
+blocks/
 *.JSON
 *.json
