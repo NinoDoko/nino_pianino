@@ -17,8 +17,6 @@ def group_notes_for_time_signature(notes, time_signature, bpm, bias_separate_not
         while len(bar) < no_beats: 
             no_beats /= 2
             bpm /= 2
-        #Note length is 1 / frequency, which is 1 / bpm, which is 1/bps
-        note_len = 1.0 / (bpm/60.0)
         new_bar = []
         i = 0
         while i < no_beats :
@@ -32,7 +30,7 @@ def group_notes_for_time_signature(notes, time_signature, bpm, bias_separate_not
                     break
             bar[i].length = length
             bar[i].time = t
-            t += bar[i].length
+            t += (bar[i].length / beat_len) * (bpm/beat_len)
             new_bar.append(bar[i])
             i = j
         result.append(music_models.Bar(new_bar, accents))
