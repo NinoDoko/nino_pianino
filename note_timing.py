@@ -30,7 +30,7 @@ def group_notes_for_time_signature(notes, time_signature, bpm, bias_separate_not
                     break
             bar[i].length = length
             bar[i].time = t
-            t += (bar[i].length / beat_len) * (bpm/beat_len)
+            t += length
             new_bar.append(bar[i])
             i = j
         result.append(music_models.Bar(new_bar, accents))
