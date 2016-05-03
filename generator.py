@@ -38,6 +38,8 @@ def main():
         mid.addTrackName(b['track'], b['play_at'][0], 'track_name')
         mid.addTempo(b['track'], b['play_at'][0], b['bpm'])
         number_of_notes = calculate_number_of_notes(b)
+        if 'pattern' in b: pattern = b['pattern']
+        else: pattern = []
         generic_notes = gen_notes_for_key(b['track'], number_of_notes, key = b['key'], scale = b['scale'], bias_same_note = b['bias_same_note'], high_end = b['high_end'], low_end = b['low_end'])
         entire_track = []
         for starting_point in b['play_at']: 
@@ -45,9 +47,8 @@ def main():
             if b.get('accents') : 
                 accents = {int(x):b['accents'][x] for x in b['accents']}
             else : accents = {}
-            grouped_notes = note_timing.group_notes_for_time_signature(ungrouped_notes, b['time_signature'], b['bpm'], b['bias_separate_notes'], accents, start_at = starting_point)
+            grouped_notes = note_timing.group_notes_for_time_signature(ungrouped_notes, b['time_signature'], b['bias_separate_notes'], accents, start_at = starting_point, pattern = pattern)
             entire_track += grouped_notes
-#        print [[(note.pitch, note.length, note.volume, note.time) for note in bar.notes] for bar in entire_track] ,'\n\n\n'
         
         for bar in entire_track: 
             for note in bar.notes:
