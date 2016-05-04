@@ -4,8 +4,7 @@ import music_models, random
 
 #Time_signature should be a string formatted as x/y, for instance 3/8. 
 #The function makes a list of bars (where a bar is a list of notes) and in those bars are tuples of notes + length of note in beats. 
-def group_notes_for_time_signature(notes, time_signature, bias_separate_notes = 0, accents = {}, start_at = 0, pattern = []):
-    no_beats, beat_len = [int(x) for x in time_signature.split('/')]
+def group_notes_for_time_signature(notes, no_beats, bias_separate_notes = 0, accents = {}, start_at = 0, pattern = []):
     notes = [notes[i:i+no_beats] for i in range(0, len(notes), no_beats)]
     
     result = [[]]

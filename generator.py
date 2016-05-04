@@ -15,7 +15,7 @@ def gen_notes_for_key(track, number_notes, key = 'A', scale = 'minor', duration 
 
 def calculate_number_of_notes(block):
     if block.get('number_of_notes'): return block['number_of_notes']
-    elif block.get('number_of_bars'): return block['number_of_bars'] * int(block['time_signature'].split('/')[0])
+    elif block.get('number_of_bars'): return block['number_of_bars'] * block['number_of_notes_in_bar']
     elif block.get('note_length'): return block['bpm']/60 * block['note_length']
     elif block.get('block_length'): return block['block_length'] / (1.0 / (block['bpm']/60))
     else: raise Exception('There was an error calculating the number of notes in block ', block.get('name'))
@@ -47,7 +47,7 @@ def main():
             if b.get('accents') : 
                 accents = {int(x):b['accents'][x] for x in b['accents']}
             else : accents = {}
-            grouped_notes = note_timing.group_notes_for_time_signature(ungrouped_notes, b['time_signature'], b['bias_separate_notes'], accents, start_at = starting_point, pattern = pattern)
+            grouped_notes = note_timing.group_notes_for_time_signature(ungrouped_notes, b['number_of_notes_in_bar'], b['bias_separate_notes'], accents, start_at = starting_point, pattern = pattern)
             entire_track += grouped_notes
         
         for bar in entire_track: 
