@@ -38,16 +38,16 @@ def main():
         mid.addTrackName(b['track'], b['play_at'][0], 'track_name')
         mid.addTempo(b['track'], b['play_at'][0], b['bpm'])
         number_of_notes = calculate_number_of_notes(b)
-        if 'pattern' in b: pattern = b['pattern']
-        else: pattern = []
-        generic_notes = gen_notes_for_key(b['track'], number_of_notes, key = b['key'], scale = b['scale'], bias_same_note = b['bias_same_note'], high_end = b['high_end'], low_end = b['low_end'])
+        gen_notes_kwargs = {'track' : b['track'], 'number_notes' : number_of_notes, 'key' : b.get('key'), 'scale' : b.get('scale'), 'bias_same_note' : b.get('bias_same_note'), 'high_end' : b.get('high_end'), 'low_end' : b.get('low_end')}
+        generic_notes = gen_notes_for_key(**gen_notes_kwargs)
         entire_track = []
         for starting_point in b['play_at']: 
             ungrouped_notes = copy.deepcopy(generic_notes)
             if b.get('accents') : 
                 accents = {int(x):b['accents'][x] for x in b['accents']}
             else : accents = {}
-            grouped_notes = note_timing.group_notes_for_time_signature(ungrouped_notes, b['number_of_notes_in_bar'], b['bias_separate_notes'], accents, start_at = starting_point, pattern = pattern)
+            grouped_notes_kwargs = {'notes' : ungrouped_notes, 'no_beats' : b.get('number_of_notes_in_bar'), 'time_signature' : b.get('time_signature'), 'bias_separate_notes' : b.get('bias_separate_notes'), 'accents' : accents, 'start_at' : starting_point, 'pattern' : b.get('pattern', [])}
+            grouped_notes = note_timing.group_notes_for_time_signature(**grouped_notes_kwargs)
             entire_track += grouped_notes
         
         for bar in entire_track: 
