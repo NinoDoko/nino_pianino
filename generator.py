@@ -1,12 +1,12 @@
 from midiutil.MidiFile import MIDIFile
 import music_models, argparse, random, note_timing, copy, json, subprocess
 
-def gen_notes_for_key(track, number_notes, key = 'A', scale = 'minor', duration = 1, bias_same_note = 0, low_end = 'A0', high_end = 'G#8'):
+def gen_notes_for_key(track, number_notes, key, scale, duration = 1, bias_same_note = 0, low_end = 'A0', high_end = 'G#8'):
     k = music_models.Key(key, scale)
     prev_note = random.choice(k.notes)
     notes = []
     while number_notes>0:
-        notes.append(music_models.Note(note = prev_note, duration = duration, volume = 100)) 
+        notes.append(music_models.Note(track = track, note = prev_note, duration = duration, volume = 100)) 
         while True:
             prev_note = k.generate_note(prev_note, 7, bias_same_note)
             if music_models.get_pitch(prev_note) < music_models.get_pitch(high_end) and music_models.get_pitch(prev_note) > music_models.get_pitch(low_end): break
@@ -32,13 +32,14 @@ def main():
     blocks = json.loads(open(args.input, 'r').read())
     
     no_tracks = max([b['track'] for b in blocks]) + 1
+    print 'Generating : ', no_tracks
     mid = MIDIFile(no_tracks)
     
     for b in blocks:
-        mid.addTrackName(b['track'], b['play_at'][0], 'track_name')
+#        mid.addTrackName(b['track'], b['play_at'][0], b['name'])
         mid.addTempo(b['track'], b['play_at'][0], b['bpm'])
         number_of_notes = calculate_number_of_notes(b)
-        gen_notes_kwargs = {'track' : b['track'], 'number_notes' : number_of_notes, 'key' : b.get('key'), 'scale' : b.get('scale'), 'bias_same_note' : b.get('bias_same_note'), 'high_end' : b.get('high_end'), 'low_end' : b.get('low_end')}
+        gen_notes_kwargs = {'track' : b['track'], 'number_notes' : number_of_notes, 'key' : b.get('key', 'A'), 'scale' : b.get('scale', 'minor'), 'bias_same_note' : b.get('bias_same_note'), 'high_end' : b.get('high_end'), 'low_end' : b.get('low_end')}
         generic_notes = gen_notes_for_key(**gen_notes_kwargs)
         entire_track = []
         for starting_point in b['play_at']: 
@@ -52,7 +53,7 @@ def main():
         
         for bar in entire_track: 
             for note in bar.notes:
-                print (note.pitch, note.length, note.volume, note.time)
+                print (note.pitch, note.length, note.volume, note.time, note.track)
                 mid.addNote(*note.get_values())
 
     binfile = open(output + '.mid', 'wb')
