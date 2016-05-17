@@ -75,9 +75,9 @@ class Key:
 #The accents is a dictionary that looks like {1 : 100, 3 : 80}, where the key is the note that is accented, and the value is the volume. This accenting dictionary will make the first note with the highest volume, and the 3rd with 80% of the highest volume. 
 #All other notes use the default value used in the constructor. 
 class Bar:
-    def __init__(self, notes, accents = {}, default_volume = 50):
+    def __init__(self, notes, accents = {}, default_accent = 50):
         self.notes = notes
-        for note in self.notes : note.volume = default_volume
+        for note in self.notes : note.volume = default_accent
         self.accents = accents
         if accents : self.accent_notes(accents)
         

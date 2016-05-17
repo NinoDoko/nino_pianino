@@ -33,7 +33,7 @@ def group_generic_notes(b, generic_notes, starting_point):
     if b.get('accents') : 
         accents = {int(x):b['accents'][x] for x in b['accents']}
     else : accents = {}
-    grouped_notes_kwargs = {'notes' : ungrouped_notes, 'no_beats' : b.get('number_of_notes_in_bar'), 'time_signature' : b.get('time_signature'), 'bias_separate_notes' : b.get('bias_separate_notes'), 'accents' : accents, 'start_at' : starting_point, 'pattern' : b.get('pattern', [])}
+    grouped_notes_kwargs = {'notes' : ungrouped_notes, 'no_beats' : b.get('number_of_notes_in_bar'), 'time_signature' : b.get('time_signature'), 'bias_separate_notes' : b.get('bias_separate_notes'), 'accents' : accents, 'start_at' : starting_point, 'pattern' : b.get('pattern', []), 'default_accent':b.get('default_accent', 50)}
     grouped_notes = note_timing.group_notes_for_time_signature(**grouped_notes_kwargs)
     return grouped_notes    
 
@@ -66,10 +66,10 @@ def main():
         if b.get('block_type') == 'complex' : 
             complex_track = []
             for block in b['blocks']: 
-                mid.addTempo(block['track'], block['play_at'][0], block['bpm'])
                 complex_track += handle_block(block)
             entire_track = []
             for starting_point in b['play_at']: 
+                mid.addTempo(block['track'], starting_point, b['bpm'])
                 temp_track = copy.deepcopy(complex_track)
                 for bar in temp_track: 
                     for note in bar.notes:
