@@ -40,11 +40,23 @@ def group_generic_notes(b, generic_notes, starting_point):
 
 def handle_block(b):
 #        mid.addTrackName(b['track'], b['play_at'][0], b['name'])
-    entire_track = []
-    generic_notes = generate_generic_notes(b)
-    for starting_point in b['play_at']: 
-        grouped_notes = group_generic_notes(b, generic_notes, starting_point)
-        entire_track += grouped_notes
+    if b.get('block_type') == 'complex' : 
+        complex_track = []
+        for block in b['blocks']: 
+            complex_track += handle_block(block)
+        entire_track = []
+        for starting_point in b['play_at']:
+            temp_track = copy.deepcopy(complex_track)
+            for bar in temp_track: 
+                for note in bar.notes:
+                    note.time += starting_point
+            entire_track += temp_track
+    else:
+        entire_track = []
+        generic_notes = generate_generic_notes(b)
+        for starting_point in b['play_at']: 
+            grouped_notes = group_generic_notes(b, generic_notes, starting_point)
+            entire_track += grouped_notes
     return entire_track
 
 def main():
@@ -63,21 +75,8 @@ def main():
     mid = MIDIFile(no_tracks)
     
     for b in blocks:
-        if b.get('block_type') == 'complex' : 
-            complex_track = []
-            for block in b['blocks']: 
-                complex_track += handle_block(block)
-            entire_track = []
-            for starting_point in b['play_at']: 
-                mid.addTempo(block['track'], starting_point, b['bpm'])
-                temp_track = copy.deepcopy(complex_track)
-                for bar in temp_track: 
-                    for note in bar.notes:
-                        note.time += starting_point
-                entire_track += temp_track
-        else:   
-            mid.addTempo(b['track'], b['play_at'][0], b['bpm'])
-            entire_track = handle_block(b)
+        mid.addTempo(b['track'], b['play_at'][0], b['bpm'])
+        entire_track = handle_block(b)
         for bar in entire_track: 
             for note in bar.notes:
                 print (note.pitch, note.length, note.volume, note.time, note.track)
