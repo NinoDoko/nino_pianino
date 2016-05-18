@@ -51,9 +51,9 @@ class Key:
         'locrian' : [0, 1, 3, 5, 6, 8, 10],
     }
     
-    def __init__(self, key = 'A', scale = 'minor', b_notes = []):
-        self.key = key
-        self.diffs = [(x + base_notes.index(key))%len(base_notes) for x in self.keys_diffs[scale]]
+    def __init__(self, root_note = 'A', scale = 'minor', b_notes = []):
+        self.root_note = root_note
+        self.diffs = [(x + base_notes.index(root_note))%len(base_notes) for x in self.keys_diffs[scale]]
         if not b_notes : 
             self.base_notes = [base_notes[x] for x in self.diffs]
         else : 

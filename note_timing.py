@@ -36,5 +36,5 @@ def group_notes_for_time_signature(notes, no_beats, bias_separate_notes = 0, acc
                 t += length
                 new_bar.append(bar[i])
                 i = j
-        result.append(music_models.Bar(new_bar, accents, default_accent = 50))
+        result.append(music_models.Bar(new_bar, accents, default_accent))
     return [x for x in result if x]
