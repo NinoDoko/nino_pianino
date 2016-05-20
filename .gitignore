@@ -4,6 +4,7 @@
 *.wav
 songs/
 blocks/
+converted/
 *.JSON
 *.json
 *.sf2
