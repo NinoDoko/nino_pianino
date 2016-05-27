@@ -2,9 +2,11 @@
 *pyc
 *.mid
 *.wav
+*.mp3
 songs/
 blocks/
 converted/
+soundfonts/
 *.JSON
 *.json
 *.sf2

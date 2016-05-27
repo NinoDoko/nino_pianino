@@ -1,8 +1,9 @@
 import itertools, random
 
-base_notes = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#']
-notes_list = [x + y for y in  [str(i) for i in range(8)] for x in base_notes]
+base_notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
+notes_list = [x + y for y in  [str(i) for i in range(0, 8)] for x in base_notes]
 pitch_offset = 21
+
 
 def get_pitch(note):
     return notes_list.index(note) + pitch_offset
@@ -11,7 +12,7 @@ def get_pitch(note):
 class Note:
     def __init__(self, track = 0, channel = 0, note = 'A0', time = 0, duration = 0, volume = 0):
         self.track = track
-        self.channel = channel
+        self.channel = channel - 1 #in code, channels are numbered 0-15, while in files they're 1-16. This matters when using percussion (channel 9 in code, 10 in files). 
         self.pitch = get_pitch(note)
         self.time = time
         self.duration = duration
@@ -53,11 +54,11 @@ class Key:
     
     def __init__(self, root_note = 'A', scale = 'minor', b_notes = []):
         self.root_note = root_note
-        self.diffs = [(x + base_notes.index(root_note))%len(base_notes) for x in self.keys_diffs[scale]]
         if not b_notes : 
+            self.diffs = [(x + base_notes.index(root_note))%len(base_notes) for x in self.keys_diffs[scale]]
             self.base_notes = [base_notes[x] for x in self.diffs]
         else : 
-            self.base_notes = base_notes
+            self.base_notes = b_notes
         self.notes = [x for x in notes_list if x[:-1] in self.base_notes]
 
     #This function generates a note regarding the note_pivot it is given. 
@@ -67,6 +68,7 @@ class Key:
         if random.randint(0, 100) < bias_same_note : 
             return note_pivot
         pivot_index = self.notes.index(note_pivot)
+#        print 'Notes are : ', self.base_notes
         note_index = random.randint(max(0, pivot_index - note_radius), min(pivot_index + note_radius, len(self.notes)-1))
         return self.notes[note_index]
 

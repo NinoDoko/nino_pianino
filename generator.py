@@ -2,6 +2,7 @@ from midiutil.MidiFile import MIDIFile
 import music_models, argparse, random, note_timing, copy, json, subprocess
 
 def gen_notes_for_key(track, number_notes, root_note, scale, channel, duration = 1, bias_same_note = 0, low_end = 'A0', high_end = 'G#8', base_notes = []):
+    print 'Low end is : ', low_end, music_models.get_pitch(low_end), 'High end is : ', high_end, music_models.get_pitch(high_end)
     k = music_models.Key(root_note, scale, base_notes)
     prev_note = random.choice(k.notes)
     notes = []
@@ -9,7 +10,9 @@ def gen_notes_for_key(track, number_notes, root_note, scale, channel, duration =
         notes.append(music_models.Note(channel = channel, track = track, note = prev_note, duration = duration, volume = 100)) 
         while True:
             prev_note = k.generate_note(prev_note, 7, bias_same_note)
-            if music_models.get_pitch(prev_note) < music_models.get_pitch(high_end) and music_models.get_pitch(prev_note) > music_models.get_pitch(low_end): break
+            if music_models.get_pitch(low_end) < music_models.get_pitch(prev_note) < music_models.get_pitch(high_end) : 
+                print 'Got note : ', prev_note, 'with pitch: ', music_models.get_pitch(prev_note)
+                break
         number_notes -= 1 
     return notes
 
@@ -38,7 +41,7 @@ def group_generic_notes(b, generic_notes, starting_point):
     return grouped_notes    
 
 
-def handle_block(b):
+def handle_block(b, mid):
 #        mid.addTrackName(b['track'], b['play_at'][0], b['name'])
     if b.get('block_type') == 'complex' : 
         complex_track = []
@@ -49,7 +52,6 @@ def handle_block(b):
             complex_track += handle_block(block, mid)
         entire_track = []
         for starting_point in b['play_at']:
-#            mid.addProgramChange(b['track'], b['channel'], starting_point, b.get('program_number', 0))
             temp_track = copy.deepcopy(complex_track)
             for bar in temp_track: 
                 for note in bar.notes:
@@ -58,7 +60,9 @@ def handle_block(b):
     else:
         entire_track = []
         generic_notes = generate_generic_notes(b)
-        for starting_point in b['play_at']: 
+        for starting_point in b['play_at']:
+            print b['name']
+            mid.addProgramChange(b['track'], b['channel'] - 1, starting_point, b.get('program_number', 0)) 
             grouped_notes = group_generic_notes(b, generic_notes, starting_point)
             entire_track += grouped_notes
     return entire_track
@@ -81,11 +85,12 @@ def main():
     for b in blocks:
         mid.addTempo(b['track'], b['play_at'][0], b['bpm'])
 #        print 'Added program change : ', b['track'], b['channel'], b['play_at'][0], b.get('program_number', 0)
-        entire_track = handle_block(b)
-        mid.addProgramChange(b['track'], b['channel'], 0, b.get('program_number', 0))
+        entire_track = handle_block(b, mid)
+#        mid.addProgramChange(b['track'], b['channel'] - 1, 0, b.get('program_number', 0))
+        #channel-1 because channels are numbered 0-15 in code, 1-16 in files. 
         for bar in entire_track: 
             for note in bar.notes:
-#                print (note.pitch, note.length, note.volume, note.time, note.track)
+#                print (note.pitch, note.length, note.volume, note.time, note.track, note.channel)
                 mid.addNote(*note.get_values())
 
     binfile = open(output + '.mid', 'wb')
