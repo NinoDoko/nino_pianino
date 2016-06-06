@@ -46,10 +46,14 @@ def handle_block(b, mid):
     if b.get('block_type') == 'complex' : 
         complex_track = []
         for block in b['blocks']: 
-            if not block.get('bpm'): block['bpm'] = b.get('bpm')
-            if not block.get('track'): block['track'] = b.get('track')
-            if not block.get('channel'): block['channel'] = b.get('channel')
+
+            block['channel'] = block.get('channel', b['channel'])
+            block['track'] = block.get('track', b['track'])
+            block['bpm'] = block.get('bpm', b['bpm'])
+            block['repeat'] = b.get('repeat', b.get('repeat', 1))
+            
             complex_track += handle_block(block, mid)
+            
         entire_track = []
         for starting_point in b['play_at']:
             temp_track = copy.deepcopy(complex_track)
@@ -58,13 +62,16 @@ def handle_block(b, mid):
                     note.time += starting_point
             entire_track += temp_track
     else:
+        repeat = b.get('repeat', 1)
         entire_track = []
-        generic_notes = generate_generic_notes(b)
+        generic_notes = []
+        while repeat > 0:
+            generic_notes += generate_generic_notes(b)
+            repeat -= 1
         for starting_point in b['play_at']:
-            print b['name']
-            mid.addProgramChange(b['track'], b['channel'] - 1, starting_point, b.get('program_number', 0)) 
-            grouped_notes = group_generic_notes(b, generic_notes, starting_point)
-            entire_track += grouped_notes
+                mid.addProgramChange(b['track'], b['channel'] - 1, starting_point, b.get('program_number', 0)) 
+                grouped_notes = group_generic_notes(b, generic_notes, starting_point)
+                entire_track += grouped_notes
     return entire_track
 
 def main():
@@ -79,7 +86,6 @@ def main():
     blocks = json.loads(open(args.input, 'r').read())
     
     no_tracks = max([b['track'] for b in blocks]) + 1
-    print 'Generating : ', no_tracks
     mid = MIDIFile(no_tracks)
 
     for b in blocks:

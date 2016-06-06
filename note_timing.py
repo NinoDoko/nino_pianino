@@ -15,7 +15,7 @@ def group_notes_for_time_signature(notes, no_beats, bias_separate_notes = 0, acc
         if pattern: 
             for i in range(len(bar)-1): 
                 try:
-                    bar[i].length = pattern[i]
+                    bar[i].duration = pattern[i]
                     bar[i].time = t
                     t += pattern[i]
                     new_bar.append(bar[i])
@@ -31,7 +31,7 @@ def group_notes_for_time_signature(notes, no_beats, bias_separate_notes = 0, acc
                     j += 1
                     if random.randint(0, 100) < bias_separate_notes or j == no_beats : 
                         break
-                bar[i].length = length
+                bar[i].duration = length
                 bar[i].time = t
                 t += length
                 new_bar.append(bar[i])
