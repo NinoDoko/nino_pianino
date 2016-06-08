@@ -2,7 +2,7 @@ from midiutil.MidiFile import MIDIFile
 import music_models, argparse, random, note_timing, copy, json, subprocess
 
 def gen_notes_for_key(track, number_notes, root_note, scale, channel, duration = 1, bias_same_note = 0, low_end = 'A0', high_end = 'G#8', base_notes = []):
-    print 'Low end is : ', low_end, music_models.get_pitch(low_end), 'High end is : ', high_end, music_models.get_pitch(high_end)
+#    print 'Low end is : ', low_end, music_models.get_pitch(low_end), 'High end is : ', high_end, music_models.get_pitch(high_end)
     k = music_models.Key(root_note, scale, base_notes)
     prev_note = random.choice(k.notes)
     notes = []
@@ -11,7 +11,7 @@ def gen_notes_for_key(track, number_notes, root_note, scale, channel, duration =
         while True:
             prev_note = k.generate_note(prev_note, 7, bias_same_note)
             if music_models.get_pitch(low_end) < music_models.get_pitch(prev_note) < music_models.get_pitch(high_end) : 
-                print 'Got note : ', prev_note, 'with pitch: ', music_models.get_pitch(prev_note)
+#                print 'Got note : ', prev_note, 'with pitch: ', music_models.get_pitch(prev_note)
                 break
         number_notes -= 1 
     return notes
@@ -45,16 +45,19 @@ def handle_block(b, mid):
 #        mid.addTrackName(b['track'], b['play_at'][0], b['name'])
     if b.get('block_type') == 'complex' : 
         complex_track = []
+        repeat = b.get('repeat', 1)
+        
+        
         for block in b['blocks']: 
-
-            block['channel'] = block.get('channel', b['channel'])
+            block['channel'] = block.get('channel', b.get('channel', 1))
             block['track'] = block.get('track', b['track'])
             block['bpm'] = block.get('bpm', b['bpm'])
-            block['repeat'] = b.get('repeat', b.get('repeat', 1))
-            
+            block['repeat'] = block.get('repeat', 1) * b.get('repeat', 1)
+#                print 'Block ', block.get('name'), 'has repeat : ', block['repeat']
             complex_track += handle_block(block, mid)
-            
+
         entire_track = []
+        
         for starting_point in b['play_at']:
             temp_track = copy.deepcopy(complex_track)
             for bar in temp_track: 
