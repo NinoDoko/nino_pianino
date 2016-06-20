@@ -1,18 +1,13 @@
 from midiutil.MidiFile import MIDIFile
 import music_models, argparse, random, note_timing, copy, json, subprocess
 
-def gen_notes_for_key(track, number_notes, root_note, scale, channel, duration = 1, bias_same_note = 0, low_end = 'A0', high_end = 'G#8', base_notes = []):
-#    print 'Low end is : ', low_end, music_models.get_pitch(low_end), 'High end is : ', high_end, music_models.get_pitch(high_end)
-    k = music_models.Key(root_note, scale, base_notes)
-    prev_note = random.choice(k.notes)
+def gen_notes_for_key(track, number_notes, root_note, scale, channel, duration = 1, bias_same_note = 0, low_end = 'A0', high_end = 'G#8', base_notes = [], notes_bias = {}):
+    k = music_models.Key(root_note, scale, base_notes, notes_bias, low_end, high_end)
     notes = []
+    prev_note = k.generate_note(None, 3, bias_same_note)
     while number_notes>0:
+        prev_note = k.generate_note(prev_note, 3, bias_same_note)
         notes.append(music_models.Note(channel = channel, track = track, note = prev_note, duration = duration, volume = 100)) 
-        while True:
-            prev_note = k.generate_note(prev_note, 7, bias_same_note)
-            if music_models.get_pitch(low_end) < music_models.get_pitch(prev_note) < music_models.get_pitch(high_end) : 
-#                print 'Got note : ', prev_note, 'with pitch: ', music_models.get_pitch(prev_note)
-                break
         number_notes -= 1 
     return notes
 
@@ -26,7 +21,7 @@ def calculate_number_of_notes(block):
 
 def generate_generic_notes(b):
     number_of_notes = calculate_number_of_notes(b)
-    gen_notes_kwargs = {'track' : b['track'], 'channel' : b['channel'], 'number_notes' : number_of_notes, 'root_note' : b.get('root_note', 'A'), 'scale' : b.get('scale', 'minor'), 'bias_same_note' : b.get('bias_same_note'), 'high_end' : b.get('high_end'), 'low_end' : b.get('low_end'), 'base_notes': b.get('base_notes')}
+    gen_notes_kwargs = {'track' : b['track'], 'channel' : b['channel'], 'number_notes' : number_of_notes, 'root_note' : b.get('root_note', 'A'), 'scale' : b.get('scale', 'minor'), 'bias_same_note' : b.get('bias_same_note'), 'high_end' : b.get('high_end'), 'low_end' : b.get('low_end'), 'base_notes': b.get('base_notes'), 'notes_bias': b.get('notes_bias', {})}
     generic_notes = gen_notes_for_key(**gen_notes_kwargs)
     return generic_notes
 
@@ -52,6 +47,7 @@ def handle_block(b, mid):
             block['channel'] = block.get('channel', b.get('channel', 1))
             block['track'] = block.get('track', b['track'])
             block['bpm'] = block.get('bpm', b['bpm'])
+            #Provides kind of weird results if your blocks aren't arranged properly, but does work in general. 
             block['repeat'] = block.get('repeat', 1) * b.get('repeat', 1)
 #                print 'Block ', block.get('name'), 'has repeat : ', block['repeat']
             complex_track += handle_block(block, mid)

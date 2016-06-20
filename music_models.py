@@ -1,7 +1,7 @@
 import itertools, random
 
 base_notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
-notes_list = [x + y for y in  [str(i) for i in range(0, 8)] for x in base_notes]
+notes_list = [x + y for y in  [str(i) for i in range(0, 9)] for x in base_notes]
 pitch_offset = 21
 
 
@@ -52,23 +52,34 @@ class Key:
         'locrian' : [0, 1, 3, 5, 6, 8, 10],
     }
     
-    def __init__(self, root_note = 'A', scale = 'minor', b_notes = []):
+    def __init__(self, root_note = 'A', scale = 'minor', b_notes = [], notes_bias = {}, low_end = 'A0', high_end = 'G#8'):
         self.root_note = root_note
+        self.diffs = [(x + base_notes.index(root_note))%len(base_notes) for x in self.keys_diffs[scale]]
+        
+        for note_diff in notes_bias: 
+            if note_diff in self.diffs:
+                self.diffs += [x for i in range(notes_bias[x])]
+                
         if not b_notes : 
-            self.diffs = [(x + base_notes.index(root_note))%len(base_notes) for x in self.keys_diffs[scale]]
             self.base_notes = [base_notes[x] for x in self.diffs]
         else : 
             self.base_notes = b_notes
-        self.notes = [x for x in notes_list if x[:-1] in self.base_notes]
+                
+        self.notes = [x for x in notes_list if x[:-1] in self.base_notes if notes_list.index(low_end) < notes_list.index(x) < notes_list.index(high_end)]
+        
 
     #This function generates a note regarding the note_pivot it is given. 
     #A pivot is required so the notes chosen aren't just completely arbitrary, and so with a given pivot and radius, the generator will pick notes relatively close to each other. 
     #The bias_same_note is an int argument <100 that is a probability for the generator to choose the same note as the pivot. If using the note_timing module, notes with the same value are squished together, which is basically how you get notes of varying length. 
-    def generate_note(self, note_pivot, note_radius = 3, bias_same_note = 0):
-        if random.randint(0, 100) < bias_same_note : 
+    def generate_note(self, note_pivot = None, note_radius = 3, bias_same_note = 0, low_end = 'A0', high_end = 'G#8'):
+        if random.randint(0, 100) < bias_same_note and note_pivot: 
             return note_pivot
-        pivot_index = self.notes.index(note_pivot)
-#        print 'Notes are : ', self.base_notes
+            
+        if not note_pivot: 
+            return random.choice(self.notes)
+        else:
+            pivot_index = self.notes.index(note_pivot)
+            
         note_index = random.randint(max(0, pivot_index - note_radius), min(pivot_index + note_radius, len(self.notes)-1))
         return self.notes[note_index]
 
