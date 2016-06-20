@@ -56,9 +56,9 @@ class Key:
         self.root_note = root_note
         self.diffs = [(x + base_notes.index(root_note))%len(base_notes) for x in self.keys_diffs[scale]]
         
-        for note_diff in notes_bias: 
-            if note_diff in self.diffs:
-                self.diffs += [x for i in range(notes_bias[x])]
+        for note_diff in notes_bias:  
+            if int(note_diff) in self.diffs:
+                self.diffs += [int(note_diff) for i in range(notes_bias[note_diff])]
                 
         if not b_notes : 
             self.base_notes = [base_notes[x] for x in self.diffs]
