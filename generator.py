@@ -44,12 +44,13 @@ def handle_block(b, mid):
         
         
         for block in b['blocks']: 
+            
             block['channel'] = block.get('channel', b.get('channel', 1))
             block['track'] = block.get('track', b['track'])
             block['bpm'] = block.get('bpm', b['bpm'])
             #Provides kind of weird results if your blocks aren't arranged properly, but does work in general. 
-            block['repeat'] = block.get('repeat', 1) * b.get('repeat', 1)
-#                print 'Block ', block.get('name'), 'has repeat : ', block['repeat']
+            block['repeat'] = block.get('repeat', b.get('repeat', 1))
+#            print 'Block ', block.get('name'), 'has repeat : ', block['repeat']
             complex_track += handle_block(block, mid)
 
         entire_track = []
@@ -64,13 +65,18 @@ def handle_block(b, mid):
         repeat = b.get('repeat', 1)
         entire_track = []
         generic_notes = []
+        g_notes = generate_generic_notes(b)
+        
         while repeat > 0:
-            generic_notes += generate_generic_notes(b)
+            generic_notes += copy.deepcopy(g_notes)
+#            print 'Generated ', len(generic_notes), 'for ', b['name']
             repeat -= 1
+            
         for starting_point in b['play_at']:
                 mid.addProgramChange(b['track'], b['channel'] - 1, starting_point, b.get('program_number', 0)) 
                 grouped_notes = group_generic_notes(b, generic_notes, starting_point)
                 entire_track += grouped_notes
+#        print 'notes for ', b['name'], ':', [[t.time for t in x.notes] for x in entire_track], '\n\n'
     return entire_track
 
 def main():
@@ -84,7 +90,7 @@ def main():
     output = args.output
     blocks = json.loads(open(args.input, 'r').read())
     
-    no_tracks = max([b['track'] for b in blocks]) + 1
+    no_tracks = 100
     mid = MIDIFile(no_tracks)
 
     for b in blocks:
