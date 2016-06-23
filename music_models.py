@@ -54,7 +54,9 @@ class Key:
     
     def __init__(self, root_note = 'A', scale = 'minor', b_notes = [], notes_bias = {}, low_end = 'A0', high_end = 'G#8'):
         self.root_note = root_note
-        self.diffs = [(x + base_notes.index(root_note))%len(base_notes) for x in self.keys_diffs[scale]]
+        root_note_index = base_notes.index(root_note)
+        self.diffs = [(x + root_note_index)%len(base_notes) for x in self.keys_diffs[scale]]
+        notes_bias = {str((int(x) + root_note_index)%len(base_notes)) : notes_bias[x] for x in notes_bias}
         
         for note_diff in notes_bias:  
             if int(note_diff) in self.diffs:
@@ -65,6 +67,7 @@ class Key:
         else : 
             self.base_notes = b_notes
                 
+        print self.base_notes
         self.notes = [x for x in notes_list if x[:-1] in self.base_notes if notes_list.index(low_end) < notes_list.index(x) < notes_list.index(high_end)]
         
 

@@ -21,7 +21,8 @@ def calculate_number_of_notes(block):
 
 def generate_generic_notes(b):
     number_of_notes = calculate_number_of_notes(b)
-    gen_notes_kwargs = {'track' : b['track'], 'channel' : b['channel'], 'number_notes' : number_of_notes, 'root_note' : b.get('root_note', 'A'), 'scale' : b.get('scale', 'minor'), 'bias_same_note' : b.get('bias_same_note'), 'high_end' : b.get('high_end'), 'low_end' : b.get('low_end'), 'base_notes': b.get('base_notes'), 'notes_bias': b.get('notes_bias', {})}
+    print b['name']
+    gen_notes_kwargs = {'track' : b['track'], 'channel' : b.get('channel', 1), 'number_notes' : number_of_notes, 'root_note' : b.get('root_note', 'A'), 'scale' : b.get('scale', 'minor'), 'bias_same_note' : b.get('bias_same_note'), 'high_end' : b.get('high_end'), 'low_end' : b.get('low_end'), 'base_notes': b.get('base_notes'), 'notes_bias': b.get('notes_bias', {})}
     generic_notes = gen_notes_for_key(**gen_notes_kwargs)
     return generic_notes
 
@@ -44,12 +45,14 @@ def handle_block(b, mid):
         
         
         for block in b['blocks']: 
-            
-            block['channel'] = block.get('channel', b.get('channel', 1))
-            block['track'] = block.get('track', b['track'])
-            block['bpm'] = block.get('bpm', b['bpm'])
+            for key in b:
+                if key not in block.keys() + ['blocks', 'block_type']:
+                    block[key] = b[key]
+#            block['channel'] = block.get('channel', b.get('channel', 1))
+#            block['track'] = block.get('track', b['track'])
+#            block['bpm'] = block.get('bpm', b['bpm'])
             #Provides kind of weird results if your blocks aren't arranged properly, but does work in general. 
-            block['repeat'] = block.get('repeat', b.get('repeat', 1))
+#            block['repeat'] = block.get('repeat', b.get('repeat', 1))
 #            print 'Block ', block.get('name'), 'has repeat : ', block['repeat']
             complex_track += handle_block(block, mid)
 
@@ -73,7 +76,7 @@ def handle_block(b, mid):
             repeat -= 1
             
         for starting_point in b['play_at']:
-                mid.addProgramChange(b['track'], b['channel'] - 1, starting_point, b.get('program_number', 0)) 
+                mid.addProgramChange(b['track'], b.get('channel', 2) - 1, starting_point, b.get('program_number', 0)) 
                 grouped_notes = group_generic_notes(b, generic_notes, starting_point)
                 entire_track += grouped_notes
 #        print 'notes for ', b['name'], ':', [[t.time for t in x.notes] for x in entire_track], '\n\n'
