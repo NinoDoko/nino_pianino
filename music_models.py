@@ -71,6 +71,7 @@ class Key:
         print self.base_notes
 
         self.notes = [x for x in notes_list if x[:-1] in self.base_notes and notes_list.index(low_end) < notes_list.index(x) < notes_list.index(high_end)]
+        print self.base_notes
         
 
     #This function generates a note regarding the note_pivot it is given. 

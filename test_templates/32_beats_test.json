@@ -1,0 +1,86 @@
+{
+    "block_type":"complex",
+    "track":1,
+    "bpm":400,
+    "play_at":[0],
+    "name":"base",
+    "blocks":
+    [
+        {
+            "block_type":"complex",
+            "name":"generic_melody",
+            "root_note":"G",
+            "scale":"minor",
+            "play_at":[0],
+            "number_of_bars":10,
+            "repeat":4,
+            "number_of_beats_per_bar":27,
+            "low_end":"C2",
+            "high_end":"C4",
+            "notes_bias":
+            {
+                "0":4,
+                "3":4,
+                "7":4
+            },
+            "blocks":
+            [            {
+                "block_type":"complex",
+                "name":"percussions",
+                "track":3,
+                "channel":10,
+                "default_accent":80,
+                "play_at":[0],
+                "blocks":
+                [
+                        {
+                            "name": "percussions_1",
+                            "play_at": [0],
+                            "root_note": "C",
+                            "scale": "major",
+                            "low_end": "B0",
+                            "pattern":[3, 2, 3, 2, 3, 2, 3, 2, 2],
+                            "high_end": "G1",
+                            "default_accent": 50,
+                            "accents": 
+                            {
+                                "0":100,
+                                "3":70, 
+                                "8":70,
+                                "13":70,
+                                "18":70
+                            }
+                        },{
+                            "name": "percussions_cymbal_1",
+                            "play_at": [0],
+                            "bias_same_note":70,
+                            "base_notes":["F#", "G#", "A#"],
+                            "low_end": "C1",
+                            "high_end": "C2",
+                            "default_accent": 70
+                        }
+                    ]
+                },{
+                    "play_at":[0],
+                    "bias_same_note":20,
+                    "low_end":"G2",
+                    "high_end":"G5"
+                },
+                {
+                    "play_at":[0],
+                    "pattern":[3, 2, 2, 3, 2, 2, 3, 2, 3, 2, 1, 1, 1],
+                    "low_end":"G1",
+                    "high_end":"G3"
+                },
+                {
+                    "channel":2,
+                    "program_number":74,
+                    "bias_same_note":80,
+                    "play_at":[54],
+                    "low_end":"G2",
+                    "high_end":"G4"
+                }
+            ]
+        }
+    ]
+}

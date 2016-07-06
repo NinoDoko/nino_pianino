@@ -1,0 +1,43 @@
+{
+    "block_type":"complex",
+    "play_at":[0, 44, 88],
+    "bpm": 500,
+    "track" : 0,
+    "blocks":
+    [
+    {
+	    "name": "main_block1",
+	    "play_at": [0, 22],
+	    "number_of_bars": 3,
+	    "root_note": "B",
+	    "scale": "major",
+	    "number_of_beats_per_bar": 7,
+	    "low_end": "B3",
+	    "high_end": "C5",
+	    "bias_separate_notes": 100,
+	    "default_accent": 40,
+	    "accents": {
+		    "0": 70,
+		    "3": 70, 
+		    "5": 50
+	    }
+    },{
+	    "name": "main_block2",
+	    "play_at": [0, 22],
+	    "number_of_bars": 2,
+	    "root_note": "B",
+	    "scale": "major",
+	    "number_of_beats_per_bar": 11,
+	    "low_end": "B1",
+	    "high_end": "C3",
+	    "pattern":[3, 2, 2, 1, 2, 2],
+	    "accents": {
+		    "0": 100,
+		    "3": 100, 
+		    "6": 80, 
+		    "8": 80, 
+		    "13": 100
+	    }
+    }
+]
+}
