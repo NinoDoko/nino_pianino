@@ -4,7 +4,7 @@ import music_models, argparse, random, note_timing, copy, json, subprocess
 def gen_notes_for_key(track, number_notes, root_note, scale, channel, duration = 1, bias_same_note = 0, low_end = 'A0', high_end = 'G#8', base_notes = [], notes_bias = {}):
     k = music_models.Key(root_note, scale, base_notes, notes_bias, low_end, high_end)
     notes = []
-    prev_note = k.generate_note(None, 3, bias_same_note)
+    prev_note = k.generate_note(None, 3)
     while number_notes>0:
         prev_note = k.generate_note(prev_note, 3, bias_same_note)
         notes.append(music_models.Note(channel = channel, track = track, note = prev_note, duration = duration, volume = 100)) 
@@ -14,8 +14,6 @@ def gen_notes_for_key(track, number_notes, root_note, scale, channel, duration =
 def calculate_number_of_notes(block):
     if block.get('number_of_notes'): return block['number_of_notes']
     elif block.get('number_of_bars'): return block['number_of_bars'] * block['number_of_beats_per_bar']
-    elif block.get('note_length'): return block['bpm']/60 * block['note_length']
-    elif block.get('block_length'): return block['block_length'] / (1.0 / (block['bpm']/60))
     else: raise Exception('There was an error calculating the number of notes in block ', block.get('name'))
 
 
@@ -39,21 +37,18 @@ def group_generic_notes(b, generic_notes, starting_point):
 
 def handle_block(b, mid):
 #        mid.addTrackName(b['track'], b['play_at'][0], b['name'])
+    print b.keys()
+    mid.addTempo(b['track'], b['play_at'][0], b['bpm'])
+    if b.get('repeat', 1) > 1:
+        b['play_at'] += [i * b.get('number_of_beats_per_bar', 1) * b.get('number_of_bars') for i in range(1, b['repeat']+1)]
+    print b['play_at']
     if b.get('block_type') == 'complex' : 
         complex_track = []
-        repeat = b.get('repeat', 1)
-        
         
         for block in b['blocks']: 
             for key in b:
-                if key not in block.keys() + ['blocks', 'block_type']:
+                if key not in block.keys() + ['blocks', 'block_type', 'play_at', 'repeat', 'number_of_blocks']:
                     block[key] = b[key]
-#            block['channel'] = block.get('channel', b.get('channel', 1))
-#            block['track'] = block.get('track', b['track'])
-#            block['bpm'] = block.get('bpm', b['bpm'])
-            #Provides kind of weird results if your blocks aren't arranged properly, but does work in general. 
-#            block['repeat'] = block.get('repeat', b.get('repeat', 1))
-#            print 'Block ', block.get('name'), 'has repeat : ', block['repeat']
             complex_track += handle_block(block, mid)
 
         entire_track = []
@@ -65,15 +60,9 @@ def handle_block(b, mid):
                     note.time += starting_point
             entire_track += temp_track
     else:
-        repeat = b.get('repeat', 1)
+        print b.keys()
         entire_track = []
-        generic_notes = []
-        g_notes = generate_generic_notes(b)
-        
-        while repeat > 0:
-            generic_notes += copy.deepcopy(g_notes)
-#            print 'Generated ', len(generic_notes), 'for ', b['name']
-            repeat -= 1
+        generic_notes = generate_generic_notes(b)       
             
         for starting_point in b['play_at']:
                 mid.addProgramChange(b['track'], b.get('channel', 2) - 1, starting_point, b.get('program_number', 0)) 
@@ -96,16 +85,16 @@ def main():
     no_tracks = 100
     mid = MIDIFile(no_tracks)
 
-    for b in blocks:
-        mid.addTempo(b['track'], b['play_at'][0], b['bpm'])
+    
+#    for b in blocks:
 #        print 'Added program change : ', b['track'], b['channel'], b['play_at'][0], b.get('program_number', 0)
-        entire_track = handle_block(b, mid)
+    entire_track = handle_block(blocks, mid)
 #        mid.addProgramChange(b['track'], b['channel'] - 1, 0, b.get('program_number', 0))
-        #channel-1 because channels are numbered 0-15 in code, 1-16 in files. 
-        for bar in entire_track: 
-            for note in bar.notes:
-#                print (note.pitch, note.length, note.volume, note.time, note.track, note.channel)
-                mid.addNote(*note.get_values())
+    #channel-1 because channels are numbered 0-15 in code, 1-16 in files. 
+    for bar in entire_track: 
+        for note in bar.notes:
+#            print note.get_values(), note.note
+            mid.addNote(*note.get_values())                
 
     binfile = open(output + '.mid', 'wb')
     mid.writeFile(binfile)

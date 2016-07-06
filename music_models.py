@@ -2,7 +2,7 @@ import itertools, random
 
 base_notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
 notes_list = [x + y for y in  [str(i) for i in range(0, 9)] for x in base_notes]
-pitch_offset = 21
+pitch_offset = 24
 
 
 def get_pitch(note):
@@ -12,6 +12,7 @@ def get_pitch(note):
 class Note:
     def __init__(self, track = 0, channel = 0, note = 'A0', time = 0, duration = 0, volume = 0):
         self.track = track
+        self.note = note
         self.channel = channel - 1 #in code, channels are numbered 0-15, while in files they're 1-16. This matters when using percussion (channel 9 in code, 10 in files). 
         self.pitch = get_pitch(note)
         self.time = time
@@ -68,7 +69,8 @@ class Key:
             self.base_notes = b_notes
                 
         print self.base_notes
-        self.notes = [x for x in notes_list if x[:-1] in self.base_notes if notes_list.index(low_end) < notes_list.index(x) < notes_list.index(high_end)]
+
+        self.notes = [x for x in notes_list if x[:-1] in self.base_notes and notes_list.index(low_end) < notes_list.index(x) < notes_list.index(high_end)]
         
 
     #This function generates a note regarding the note_pivot it is given. 
