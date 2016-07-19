@@ -69,7 +69,7 @@ class Key:
             self.base_notes = b_notes
                 
         print self.base_notes
-
+        print low_end, high_end
         self.notes = [x for x in notes_list if x[:-1] in self.base_notes and notes_list.index(low_end) < notes_list.index(x) < notes_list.index(high_end)]
         print self.base_notes
         

@@ -19,7 +19,6 @@ def calculate_number_of_notes(block):
 
 def generate_generic_notes(b):
     number_of_notes = calculate_number_of_notes(b)
-    print b['name']
     gen_notes_kwargs = {'track' : b['track'], 'channel' : b.get('channel', 1), 'number_notes' : number_of_notes, 'root_note' : b.get('root_note', 'A'), 'scale' : b.get('scale', 'minor'), 'bias_same_note' : b.get('bias_same_note'), 'high_end' : b.get('high_end'), 'low_end' : b.get('low_end'), 'base_notes': b.get('base_notes'), 'notes_bias': b.get('notes_bias', {})}
     generic_notes = gen_notes_for_key(**gen_notes_kwargs)
     return generic_notes
@@ -40,11 +39,15 @@ def handle_block(b, mid):
     mid.addTempo(b['track'], b['play_at'][0], b['bpm'])
     if b.get('repeat', 1) > 1:
         b['play_at'] += [i * b.get('number_of_beats_per_bar', 1) * b.get('number_of_bars') for i in range(1, b['repeat']+1)]
+    print b['play_at']
     if b.get('block_type') == 'complex' : 
         complex_track = []
         
         for block in b['blocks']: 
             for key in b:
+                if type(block) != dict: 
+                    print block, type(block)
+                    print b['blocks']
                 if key not in block.keys() + ['blocks', 'block_type', 'play_at', 'repeat', 'number_of_blocks']:
                     block[key] = b[key]
             complex_track += handle_block(block, mid)

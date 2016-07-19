@@ -10,6 +10,8 @@ This is a program designed to create music based on previously defined JSON temp
 
 This program uses the Midiutil package to add notes to a midi track. I included it in the repo for convenience. I may have been able to use additional functionalities of the package, but I had a vision and lack of experience, so I just used what I needed and may have reinvented some wheels in the process. 
 
+Disclaimer: I'm still a novice in software programming. Smelly code and lacking documentation may be present, but do feel free to drop good criticism so I can improve the project and my future endeavours. Of course, if you would want to do so :)
+
 <h2>
     Templates
 </h2>
