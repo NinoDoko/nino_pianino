@@ -51,9 +51,4 @@ class Block:
             t = self.generate_json()
             f.write(t)
             
-a = Block(name = 'neshoa', track = 5, root_note = 'A#', scale = 'major')
-c = Block(name = 'neshoc', track = 6, root_note = 'C', scale = 'minor')
-d = Block(name = 'neshod', track = 6, root_note = 'F', scale = 'major')
-e = Block(name = 'neshoe', track = 6, block_type = 'complex', blocks = [c,d])
-b = Block(name = 'nesho_complex', track = 5, bpm = 120, blocks = [a, e], block_type = 'complex')
-b.dump_json_to_file('block_json')
+
