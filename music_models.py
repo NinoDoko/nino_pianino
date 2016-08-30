@@ -62,16 +62,13 @@ class Key:
         for note_diff in notes_bias:  
             if int(note_diff) in self.diffs:
                 self.diffs += [int(note_diff) for i in range(notes_bias[note_diff])]
-                
+
         if not b_notes : 
             self.base_notes = [base_notes[x] for x in self.diffs]
         else : 
             self.base_notes = b_notes
-                
-        print self.base_notes
-        print low_end, high_end
+
         self.notes = [x for x in notes_list if x[:-1] in self.base_notes and notes_list.index(low_end) < notes_list.index(x) < notes_list.index(high_end)]
-        print self.base_notes
         
 
     #This function generates a note regarding the note_pivot it is given. 

@@ -39,7 +39,6 @@ def handle_block(b, mid):
     mid.addTempo(b['track'], b['play_at'][0], b['bpm'])
     if b.get('repeat', 1) > 1:
         b['play_at'] += [i * b.get('number_of_beats_per_bar', 1) * b.get('number_of_bars') for i in range(1, b['repeat']+1)]
-    print b['play_at']
     if b.get('block_type') == 'complex' : 
         complex_track = []
         
