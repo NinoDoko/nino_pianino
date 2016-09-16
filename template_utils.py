@@ -33,12 +33,21 @@ def create_chord_progression(block, chords = [], extra_kwargs = {}):
     blocks = []
     for i in range(len(chords)): 
         new_block = {
+            'name' : 'gen_chord_' + chords[i][0], 
             'play_at' : [i * no_beats * no_bars],
             'root_note' : chords[i][0], 
             'scale' : chords[i][1], 
-            'number_of_bars' : no_bars
+            'number_of_bars' : no_bars,
+            'number_of_beats_per_bar' : block['number_of_beats_per_bar']
         }
         for kwarg in extra_kwargs: 
             new_block[kwarg] = extra_kwargs[kwarg]
         blocks.append(new_block)
     return blocks
+
+def repeat_block(block, number_repeats, number_of_bars):
+    play_at = block['play_at']
+    result = []
+    for entry in play_at:
+        result += [entry] + [entry + i * block.get('number_of_beats_per_bar', 1) * number_of_bars for i in range(1, number_repeats)]
+    return result

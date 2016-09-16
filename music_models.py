@@ -67,9 +67,11 @@ class Key:
             self.base_notes = [base_notes[x] for x in self.diffs]
         else : 
             self.base_notes = b_notes
+       
+        self.notes = [[x] * self.base_notes.count(x[:-1]) for x in notes_list if x[:-1] in self.base_notes and notes_list.index(low_end) < notes_list.index(x) < notes_list.index(high_end)]
+#        print [[x] for x in notes_list if x[:-1] in self.base_notes]
+        self.notes = [item for sublist in self.notes for item in sublist]
 
-        self.notes = [x for x in notes_list if x[:-1] in self.base_notes and notes_list.index(low_end) < notes_list.index(x) < notes_list.index(high_end)]
-        
 
     #This function generates a note regarding the note_pivot it is given. 
     #A pivot is required so the notes chosen aren't just completely arbitrary, and so with a given pivot and radius, the generator will pick notes relatively close to each other. 

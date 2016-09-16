@@ -36,10 +36,10 @@ def group_generic_notes(b, generic_notes, starting_point):
 
 def handle_block(b, mid):
 #        mid.addTrackName(b['track'], b['play_at'][0], b['name'])
-    mid.addTempo(b['track'], b['play_at'][0], b['bpm'])
     if b.get('repeat', 1) > 1:
         b['play_at'] += [i * b.get('number_of_beats_per_bar', 1) * b.get('number_of_bars') for i in range(1, b['repeat']+1)]
-    if b.get('block_type') == 'complex' : 
+    if b.get('block_type') == 'complex' :
+        mid.addTempo(b['track'], b['play_at'][0], b['bpm']) 
         complex_track = []
         
         for block in b['blocks']: 
