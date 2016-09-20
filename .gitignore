@@ -7,6 +7,7 @@ songs/
 blocks/
 converted/
 soundfonts/
+web_app/*
 *.JSON
 *.json
 *.sf2
