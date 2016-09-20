@@ -6,7 +6,7 @@
     Synopsys
 </h2>
 
-This is a program designed to create music based on previously defined JSON templates. These templates allow you to define blocks of music, and then combine said blocks to create a song. Defining a block of music requires details about the piece of music it should generate (such as number of notes, the key(s) used in the block, time signature and so on), but a lot of these options have defaults, so, in theory, ~~you should be able to just leave a blank block and it should generate some sort of music. ~~ this _may_ happen sometime far in the future but yeah. 
+This is a program designed to create music based on previously defined JSON templates. These templates allow you to define blocks of music, and then combine said blocks to create a song. Defining a block of music requires details about the piece of music it should generate (such as number of notes, the key(s) used in the block, time signature and so on), but a lot of these options have defaults, so, in theory, <s>you should be able to just leave a blank block and it should generate some sort of music. </s> this _may_ happen sometime far in the future but yeah. 
 
 The generator.py program doesn't necessarily require JSON files to work - you can import it in another python script and pass a dictionary of blocks and use them to generate a song. Examples will be provided below. 
 
@@ -82,7 +82,7 @@ The way templates work is by defining a JSON file which contains some blocks. Ea
     <li>
     repeat: This option will cause the whole block to be repeated multiple times. It is there purely as a convenience if you have a block you know will be played multiple times. The way it works is it simply adds additional points to the play_at list. For instance, a block with 7 beats per bar and 4 bars with play_at: [0, 112] and repeat: 2 will end up with play_at: [0, 28, 112, 140]. 
     To use this, you will need to supply the block with a number_of_bars value as well as a number_of_beats_per_bar, so the program can do the math. 
-    **Warning: This seems to be malfunctioning atm. Do try to avoid using it. **
+    <b>Warning: This seems to be malfunctioning atm. It does work but it can be weird, so do try to avoid using it. </b>
     </li>
     <li>
     root_note: The root note that, along with the scale value, will determine the notes generated for the block. Default: A
@@ -396,3 +396,4 @@ TODO
 </h2>
 
 Well, this has a long way to go and I'm sure there's a lot of issues to fix. I have plans for adding a bunch more options, there's inevitably going to be bugs, the code probably needs to be better organized and documented. All in due time. I just wanted to get this out there because I'm still a novice in software development and could use constructive criticism. 
+
