@@ -37,6 +37,7 @@ def group_generic_notes(b, generic_notes, starting_point):
 def handle_block(b, mid):
 #        mid.addTrackName(b['track'], b['play_at'][0], b['name'])
     if b.get('repeat', 1) > 1:
+        print b['name']
         b['play_at'] += [i * b.get('number_of_beats_per_bar', 1) * b.get('number_of_bars') for i in range(1, b['repeat']+1)]
     if b.get('block_type') == 'complex' :
         mid.addTempo(b['track'], b['play_at'][0], b['bpm']) 
@@ -71,36 +72,47 @@ def handle_block(b, mid):
 #        print 'notes for ', b['name'], ':', [[t.time for t in x.notes] for x in entire_track], '\n\n'
     return entire_track
 
+
+
+
+
 def main():
 
     parser = argparse.ArgumentParser(description="Basic arguments")
     parser.add_argument('--use_soundfont', help = 'Soundfont to use for creating a wav file. If not specified, will just create a mid file', default = '')
     parser.add_argument('--output', help = 'Path for output midi file. ', default = 'output')
     parser.add_argument('--input', help = 'Path for input JSON file. ', default = 'input.JSON')
+    parser.add_argument('--no_tracks', help = 'Number of tracks. Default is 100. ', default = 100)
 
     args = parser.parse_args()
     output = args.output
     blocks = json.loads(open(args.input, 'r').read())
     
-    no_tracks = 100
-    mid = MIDIFile(no_tracks)
-
+    no_tracks = args.no_tracks
     
-#    for b in blocks:
-#        print 'Added program change : ', b['track'], b['channel'], b['play_at'][0], b.get('program_number', 0)
+    mid = generate(blocks, no_tracks)
+    write_mid(mid, args.output, args.use_soundfont)
+    
+    
+def generate(blocks, no_tracks = 100):
+    mid = MIDIFile(no_tracks)
+    
     entire_track = handle_block(blocks, mid)
-#        mid.addProgramChange(b['track'], b['channel'] - 1, 0, b.get('program_number', 0))
-    #channel-1 because channels are numbered 0-15 in code, 1-16 in files. 
+
     for bar in entire_track: 
         for note in bar.notes:
-#            print note.get_values(), note.note
             mid.addNote(*note.get_values())                
 
+    return mid
+    
+
+def write_mid(mid, output, use_soundfont = ''):
     binfile = open(output + '.mid', 'wb')
     mid.writeFile(binfile)
     binfile.close()
-    if args.use_soundfont: 
-        command = ['fluidsynth', '-F', output + '.wav', args.use_soundfont, output + '.mid']
+    if use_soundfont: 
+        command = ['fluidsynth', '-F', output + '.wav', use_soundfont, output + '.mid']
         subprocess.call(command)
 
-main()
+if __name__ == '__main__' : 
+    main()

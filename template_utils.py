@@ -3,7 +3,7 @@ def create_base_block(bpm = 120, play_at = [0], name = 'base', track = 1, ):
 
 
 def create_percussion(block, no_hits = 1, no_cymbals = 1):
-    percussion_base = {"block_type":"complex", "name":"percussions",  "track":10, "channel":10, "default_accent":80, "play_at":block['play_at'], "number_of_beats_per_bar" : block["number_of_beats_per_bar"], "number_of_bars" : block["number_of_bars"], "blocks": []} 
+    percussion_base = {"block_type":"complex", "name":"percussions",  "track":10, "channel":10, "default_accent":80, "play_at":[0], "number_of_beats_per_bar" : block["number_of_beats_per_bar"], "number_of_bars" : block["number_of_bars"], "blocks": []} 
     for i in range(no_hits):
         percussion_base['blocks'].append({
             "name": "percussions_" + str(i),
