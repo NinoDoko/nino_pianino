@@ -6,7 +6,9 @@
     Synopsys
 </h2>
 
-This is a program designed to create music based on previously defined JSON templates. These templates allow you to define blocks of music, and then combine said blocks to create a song. Defining a block of music requires details about the piece of music it should generate (such as number of notes, the key(s) used in the block, time signature and so on), but a lot of these options have defaults, so, in theory, you should be able to just leave a blank block and it should generate some sort of music. 
+This is a program designed to create music based on previously defined JSON templates. These templates allow you to define blocks of music, and then combine said blocks to create a song. Defining a block of music requires details about the piece of music it should generate (such as number of notes, the key(s) used in the block, time signature and so on), but a lot of these options have defaults, so, in theory, ~~you should be able to just leave a blank block and it should generate some sort of music. ~~ this _may_ happen sometime far in the future but yeah. 
+
+The generator.py program doesn't necessarily require JSON files to work - you can import it in another python script and pass a dictionary of blocks and use them to generate a song. Examples will be provided below. 
 
 This program uses the Midiutil package to add notes to a midi track. I included it in the repo for convenience. I may have been able to use additional functionalities of the package, but I had a vision and lack of experience, so I just used what I needed and may have reinvented some wheels in the process. 
 
@@ -79,14 +81,16 @@ The way templates work is by defining a JSON file which contains some blocks. Ea
     </li>
     <li>
     repeat: This option will cause the whole block to be repeated multiple times. It is there purely as a convenience if you have a block you know will be played multiple times. The way it works is it simply adds additional points to the play_at list. For instance, a block with 7 beats per bar and 4 bars with play_at: [0, 112] and repeat: 2 will end up with play_at: [0, 28, 112, 140]. 
+    To use this, you will need to supply the block with a number_of_bars value as well as a number_of_beats_per_bar, so the program can do the math. 
+    **Warning: This seems to be malfunctioning atm. Do try to avoid using it. **
     </li>
     <li>
     root_note: The root note that, along with the scale value, will determine the notes generated for the block. Default: A
     </li>
     <li>
-    scale: Combined with the root note, this represents a list of notes that the generator will choose from. There's a lot of different types of scales that you can look up online. The ones implemented are :
+    scale: Combined with the root note, this represents a list of notes that the generator will choose from. There's a lot of different types of scales that you can look up online. 
     #TODO spoiler quote with all scales
-    Defaul: minor
+    Default: minor
     </li>
     <li>
     base_notes: If there is not a scale that you want to use, you can use a list of base notes. For instance, if you want to use a gypsy scale minus the last two notes, you can write a base_notes value like so: [0, 2, 3, 6, 7]. Default: []
@@ -106,7 +110,6 @@ The way templates work is by defining a JSON file which contains some blocks. Ea
     <li>
     notes_bias: A dictionary where each key is the position of the note in the scale, and the value is how many times the note should be added to the base notes of the key. Basically, the higher the number, the more often that note will come up. For isntance, adding a notes_bias of {"0":5} for C major will generate the base notes: ['C', 'D', 'E', 'F', 'G', 'A', 'B', 'C', 'C', 'C', 'C']. Notice the 5 C's. Thus, when generating a random note, it will have a 5 / 11 = 0.4545 chance to hit a C. 
     </li>
-    #TODO Add all possible options. 
 </ul>
 
 <h3>Complex blocks</h3>
@@ -181,7 +184,7 @@ This will use an example template and create a midi file - myfirstsong.mid . Add
     #apt-get install fluidsynth
 ```
 
-Then, you need a soundfont. <a href = "http://www.synthfont.com/soundfonts.html">This </a>is where I got the ones I use for testing, specifically the FluidR3 GM bank. Mind you, this is an sfArk file, and you need to find a way to decompress it. Alternatively, you can just google around for a standard issue sf2. 
+Then, you need a soundfont. <a href = "http://www.synthfont.com/soundfonts.html">This </a>is where I got the ones I use for testing, specifically the FluidR3 GM bank. Mind you, this is an sfArk file, and you need to find a way to decompress it. Alternatively, you can just google around for a standard issue sf2. Decompressing sfArks is a bit annoying, but I managed to get by with following <a href = "https://help.ubuntu.com/community/HowToCompressedSoundFonts">this tutorial</a>.
 
 With fluidsynth, you can then go: 
 
@@ -203,6 +206,7 @@ List of arguments:
     --output: An argument which defines the name under which the .mid (and .wav) file be saved. Default = 'output'
     --input: An argument with the path to the .json file containing the template. Default = 'input.json'
     --use_soundfont: Path to the sf2 file to use for creating a wav. Only works if you have fluidsynth. default = ''
+    --no_tracks: The maximum number of tracks for the mid. Generally you don't have to worry about this. Default is set to 100. 
     </li>
 </ul>
     
@@ -248,6 +252,12 @@ This module contains (for the time being) a single method that organizes notes i
 The function takes an already generated list of notes and assigns to them the volumes, length and the time at which they appear in the songs. 
 
 <h3>
+    template_utils.py
+</h3>
+
+This file contains a bunch of functions which should make writing code that generates the music blocks a bit easier. More details on how to use this below, in section *Template utils*.
+
+<h3>
     generator.py
 </h3>
 
@@ -255,13 +265,15 @@ This is what brings it all together. It reads in a JSON file, parses the argumen
 
 This module doesn't actually do any of the work - it just takes input, calls other modules, organizes the returned values and handles the output. In other words, you call this script to generate the songs. Usage is described in the Usage section. 
 
+Alternatively, you can import this file in any custom python script and call generate() to get a MIDIFile object, which you can then write with write_mid(). 
+
 <h2>
 Using different instruments
 </h2>
 
 There's currently no wrapper for using instruments because it depends on the soundfonts that you're using. I may add support for instruments for soundfonts following the General MIDI standard, but I lack the time at the moment. 
 
-As a result, currently, it's pretty easy to add normal instruments - all you have to do is to create a block, add a channel not being used already (if possible, otherwise at least a channel that is not being used at the same time), add a program_number for that channel and there you go!
+Currently, it's pretty easy to add normal instruments - all you have to do is to create a block, add a channel not being used already (if possible, otherwise at least a channel that is not being used at the same time), add a program_number for that channel and there you go!
 
 The difficult part is adding percussions. Most of my percussion blocks currently use something like this: 
 
@@ -307,6 +319,77 @@ The difficult part is adding percussions. Most of my percussion blocks currently
 
 This takes advantage of the predefined notes for percussions, but it does sound kinda dorky. Granted, drumming has never been my strong side, I could probably make a better way to add drums to a song. Also note that the parent complex block uses the 10th channel, which is by General Midi standards the channel for adding percussions and program_number is generally ignored. 
 
+
+<h2>
+    Template utils
+</h2>
+
+To alleviate this, I've created a template_utils.py file which will aim to help with programatically creating blocks. This file kind of solves the percussion problem, as well as generating a few blocks following a chord pattern. So far, it contains a bunch of methods: 
+
+    create_base_block(bpm = 120, play_at = [0], name = 'base', track = 1, )
+    
+    It just returns a dict with the specified parameters. Useful if you want to have a bunch of defaults. 
+    
+    
+    create_percussion(block, no_hits = 1, no_cymbals = 1)
+    
+    Returns a percussion block, generated using the supplied _block_ values for number_of_bars and number_of_beats_per_bar. The no_hits argument tells the method how many blocks it should generate for generid drum hits, and the no_cymbals does the same for cymbal hits. As I am no musician, I don't know the actual terms, so feel free to correct me. 
+    
+    Example usage: 
+    ```
+        piano_intro = 
+        {
+            'track' : 1,
+            'number_of_beats_per_bar' : ...
+        }
+        
+        percussion_intro = template_utils.create_percussion(piano_intro)
+        percussion_intro['blocks'][0]['pattern'] = [3, 2, 2]
+        percussion_intro['blocks'][1]['bias_same_note'] = 60
+        
+        piano_intro['blocks'].append(percussion_intro)
+
+    ```
+
+    create_chord_progression(block, chords = [], extra_kwargs = {})
+
+    Returns a list of blocks following a specific chord progression and according to values from the supplied block. Basically, pass it a complex base block with values such as number_of_beats_per_bar, number_of_bars and a chord progression. The progression needs to be in form [('root_note', 'scale'), ('root_note', 'scale')...]. The method then knows how long the blocks need to be and when they need to be played, and will correctly generate a list of blocks that you can directly append to the block['blocks'] value. At least in theory (and currently in practice). 
+    You can also pass extra_kwargs, which is a dictionary of any additional arguments you want the resulting blocks to have, such as notes_bias, low_end and high_end etc. 
+    
+    Example usage: 
+    ```
+        piano_intro = 
+        {
+            'track' : 1,
+            'number_of_beats_per_bar' : 7, 
+            'number_of_bars' : 4, 
+            'name' : 'piano_intro', 
+            'play_at' : [0], 
+            'block_type' : 'complex',
+            'default_accent' : 60, 
+            'blocks' : 
+            []
+        }
+        piano_high_intro = template_utils.create_chord_progression(piano_intro, chords = [('G', 'major')], extra_kwargs = {'low_end' : 'G2', 'high_end' : 'G4', 'bias_same_note' : 30, 'notes_bias' : {'0' : 4, '2' : 2, '4' : 4, '7' : 4, '8' : 2}, 'number_of_bars' : 4})
+        piano_intro['blocks'] = piano_high_intro
+    ```
+    
+    repeat_block(block, number_repeats, number_of_bars)
+    
+    The preferred substitute for the repeat key of a block (for now). Give it a block, how many times it should repeat and the number_of_bars of the block. It will successfuly generate and return a list of integers for when the block needs to be played. 
+    
+    Example usage:
+    ```
+        piano_intro = 
+        {
+            'track' : 1,
+            'number_of_bars' : 4, 
+            'number_of_beats_per_bar' : 7,
+            'play_at' : [0], 
+            ...
+        }
+        piano_intro['play_at'] = template_utils.repeat_block(piano_intro, 4, 4) #Will result with play_at = [0, 28, 56, 84]
+    ```
 
 <h2>
 TODO
