@@ -53,7 +53,7 @@ class Key:
         'locrian' : [0, 1, 3, 5, 6, 8, 10],
     }
     
-    def __init__(self, root_note = 'A', scale = 'minor', b_notes = [], notes_bias = {}, low_end = 'A0', high_end = 'G#8'):
+    def __init__(self, root_note = 'A', scale = 'minor', b_notes = [], notes_bias = {}, low_end = 'A2', high_end = 'G#6'):
         self.root_note = root_note
         root_note_index = base_notes.index(root_note)
         self.diffs = [(x + root_note_index)%len(base_notes) for x in self.keys_diffs[scale]]

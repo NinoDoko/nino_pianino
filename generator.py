@@ -19,7 +19,7 @@ def calculate_number_of_notes(block):
 
 def generate_generic_notes(b):
     number_of_notes = calculate_number_of_notes(b)
-    gen_notes_kwargs = {'track' : b['track'], 'channel' : b.get('channel', 1), 'number_notes' : number_of_notes, 'root_note' : b.get('root_note', 'A'), 'scale' : b.get('scale', 'minor'), 'bias_same_note' : b.get('bias_same_note'), 'high_end' : b.get('high_end'), 'low_end' : b.get('low_end'), 'base_notes': b.get('base_notes'), 'notes_bias': b.get('notes_bias', {})}
+    gen_notes_kwargs = {'track' : b['track'], 'channel' : b.get('channel', 1), 'number_notes' : number_of_notes, 'root_note' : b.get('root_note', 'A'), 'scale' : b.get('scale', 'minor'), 'bias_same_note' : b.get('bias_same_note'), 'high_end' : b.get('high_end', 'G#7'), 'low_end' : b.get('low_end', 'C1'), 'base_notes': b.get('base_notes'), 'notes_bias': b.get('notes_bias', {})}
     generic_notes = gen_notes_for_key(**gen_notes_kwargs)
     return generic_notes
 

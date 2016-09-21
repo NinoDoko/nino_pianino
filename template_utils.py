@@ -1,4 +1,26 @@
-def create_base_block(bpm = 120, play_at = [0], name = 'base', track = 1, ):
+import random
+from music_models import base_notes
+
+chord_progressions = [
+    [(0, 'major'), (5, 'major'), (7, 'major')], # 1-4-5 (C-F-G)
+    [(0, 'major'), (9, 'minor'), (2, 'minor'), (7, 'major')], #1-6-2-5 (C-Am-Dm-G)
+    [(0, 'major'), (7, 'major'), (2, 'minor'), (9, 'minor'), (5, 'major'), (5, 'minor')], #1-5-2-6-4-4 (C-G-Dm-Am-F-Fm)
+]
+
+
+#You can pass root_note as either the index or the value of the note. 
+def generate_chord_progression(root_note):
+    progression = random.choice(chord_progressions)
+    if root_note in base_notes: 
+        root_note = base_notes.index(root_note)
+    #Here we assume root_note is the index of the root note. 
+    
+    progression = [(base_notes[(root_note + chord[0])%len(base_notes)], chord[1]) for chord in progression]
+    
+    return progression
+           
+
+def create_base_block(bpm = 120, play_at = [0], name = 'base', track = 1):
     return {'bpm' : bpm, 'play_at' : play_at, 'name' : name, 'block_type' : 'complex', 'track' : track, 'blocks' : []}
 
 
