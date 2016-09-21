@@ -1,7 +1,7 @@
 import tornado.ioloop
 import tornado.web
 import json
-import generator
+import generator, song_generator
 
 class MainHandler(tornado.web.RequestHandler):
     def post(self):
@@ -20,9 +20,28 @@ class MainHandler(tornado.web.RequestHandler):
                 self.write(data)
         self.finish
         
+    def get(self):
+        new_song = song_generator.generate_song()
+        buf_size = 4096
+        self.set_header('Content Type', 'application/octet-stream')
+        self.set_header('Content-Disposition', 'attachment; filename=' + new_song )
+        with open(new_song, 'r') as f: 
+            while True: 
+                data = f.read(buf_size)
+                if not data:
+                    break
+                self.write(data)
+        self.finish
+
+class IndexHandler(tornado.web.RequestHandler):        
+    def get(self):
+        self.write('Hello!')
+
+        
         
 def make_app():
     return tornado.web.Application([
+        (r'/', IndexHandler),
         (r'/generate_song', MainHandler),
     ])
     
