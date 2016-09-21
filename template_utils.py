@@ -40,7 +40,7 @@ def create_percussion(block, no_hits = 1, no_cymbals = 1):
         percussion_base['blocks'].append({
             "name": "percussions_cymbals_" + str(i),
             "play_at": [0],
-            "base_notes" : ['F#', 'G#', 'A#', 'C#', 'D#'],
+            "base_notes" : ['F#', 'F#', 'F#', 'G#', 'G#', 'G#', 'A#', 'A#', 'C#', 'D#'],
             "low_end": "F#1",
             "high_end": "D#2",
         })
