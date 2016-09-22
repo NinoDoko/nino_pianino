@@ -50,6 +50,7 @@ def make_app():
     
     
 if __name__ == '__main__':
+    print 'Running main!'
     app = make_app()
     http_server = tornado.httpserver.HTTPServer(app)
     port = int(os.environ.get("PORT", 5000))
