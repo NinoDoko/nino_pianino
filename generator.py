@@ -107,18 +107,14 @@ def generate(blocks, no_tracks = 100):
     
 
 def write_mid(mid, output, use_soundfont = ''):
-    song_path = output
-    try: 
-        binfile = open(song_path + '.mid', 'w+b')
-    except IOError: 
-        song_path = '/tmp/' + song_path
-        binfile = open(song_path + '.mid', 'w+b')
+    binfile = open(output + '.mid', 'w+b')
+    
     mid.writeFile(binfile)
     binfile.close()
     if use_soundfont: 
-        command = ['fluidsynth', '-F', output + '.wav', use_soundfont, song_path + '.mid']
+        command = ['fluidsynth', '-F', output + '.wav', use_soundfont, output + '.mid']
         subprocess.call(command)
-    return song_path
+    return output
 
 if __name__ == '__main__' : 
     main()
