@@ -107,7 +107,7 @@ def generate(blocks, no_tracks = 100):
     
 
 def write_mid(mid, output, use_soundfont = ''):
-    binfile = open(output + '.mid', 'wb')
+    binfile = open(output + '.mid', 'w+b')
     mid.writeFile(binfile)
     binfile.close()
     if use_soundfont: 
