@@ -112,6 +112,7 @@ def write_mid(mid, output, use_soundfont = ''):
     mid.writeFile(binfile)
     binfile.close()
     if use_soundfont: 
+        print subprocess.check_output(['ls', 'soundfonts'])
         command = ['fluidsynth', '-F', output + '.wav', use_soundfont, output + '.mid']
         subprocess.call(command)
     return output
