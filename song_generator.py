@@ -67,9 +67,9 @@ def generate_song():
     mid = generator.generate(base_block)
     song_id = str(uuid.uuid4())
     song_name = 'http_generated/' + 'generated_song_' + song_id
-    generator.write_mid(mid, song_name, use_soundfont = 'soundfonts/FluidR3_GM.sf2')
-    success = subprocess.check_output(['lame', song_name + '.wav'])
-    return song_name + '.mp3'
+    song_path = generator.write_mid(mid, song_name, use_soundfont = 'soundfonts/FluidR3_GM.sf2')
+    success = subprocess.check_output(['lame', song_path + '.wav'])
+    return song_path + '.mp3'
 
 def generate_segment(track_no):
     segment =  {
