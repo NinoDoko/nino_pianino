@@ -1,6 +1,9 @@
 import tornado.ioloop
 import tornado.web
+import tornado.httpserver
 import json
+
+import os
 import generator, song_generator
 
 class MainHandler(tornado.web.RequestHandler):
@@ -48,5 +51,9 @@ def make_app():
     
 if __name__ == '__main__':
     app = make_app()
+    http_server = tornado.httpserver.HTTPServer(app)
+    port = int(os.environ.get("PORT", 5000))
+    http_server.listen(port)
+    tornado.ioloop.IOLoop.instance().start()
     app.listen(8888)
     tornado.ioloop.IOLoop.current().start()
