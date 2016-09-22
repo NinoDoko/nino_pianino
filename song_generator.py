@@ -3,6 +3,8 @@ import subprocess
 import random
 import template_utils   
 import generator
+import name_gen
+import haikunator
 
 def generate_song():
     song_root_note = random.choice(template_utils.base_notes)
@@ -24,10 +26,16 @@ def generate_song():
                 print len(segments), ' number of segments'
                 exit(-1)
             segment['play_at'] = [prev['play_at'][0] + prev['number_of_bars'] * prev['number_of_beats_per_bar']]
-            segment['default_accent'] = prev['default_accent'] + random.randint(-10, 10)
+            segment['default_accent'] = prev['default_accent'] + random.randint(-5, 5)
+            
+            lower_bpm_bound = int(-30 * 540 / (540 - prev['bpm'] * 0.8))
+            higher_bpm_bound = int(30 * 540 / (prev['bpm'] * 0.8 - 540))
+            
+            print 'Bounds are : ', lower_bpm_bound, higher_bpm_bound, prev['bpm']
+            segment['bpm'] = prev['bpm'] + random.randint(lower_bpm_bound, higher_bpm_bound)
             
         else: 
-            segment['default_accent'] = random.randint(40, 60)
+            segment['default_accent'] = random.randint(45, 55)
             
         segment_instruments = song_instruments + [random.randint(0, 90) for i in range(random.randint(0, 2))]
         
@@ -44,7 +52,7 @@ def generate_song():
             segment_channel = instrument + segment['track']*len(segment_instruments) + 1 
             if segment_channel == 10: segment_channel = instrument + len(segments)*len(segment_instruments) + 1 
             
-            segment['blocks'] += template_utils.create_chord_progression(segment, chords = chords, extra_kwargs = {'low_end' : song_root_note + str(low_end), 'high_end' : song_root_note + str(high_end), 'channel' : segment_channel , 'program_number' : segment_instruments[instrument], 'default_accent' : segment['default_accent'] + random.randint(-5, 5), 'bias_notes' : {'0' : 3, '4' : 3, '7' : 3}, 'bias_same_note' : random.randrange(10, 60, 5)})
+            segment['blocks'] += template_utils.create_chord_progression(segment, chords = chords, extra_kwargs = {'low_end' : song_root_note + str(low_end), 'high_end' : song_root_note + str(high_end), 'channel' : segment_channel , 'program_number' : segment_instruments[instrument], 'default_accent' : segment['default_accent'] + random.randint(-5, 5), 'bias_notes' : {'0' : 3, '4' : 3, '7' : 3}, 'bias_same_note' : random.randrange(10, 80, 15)})
             
         percussion = template_utils.create_percussion(segment, no_hits = random.randint(2, 3), no_cymbals = random.randint(1, 3))
         percussion['blocks'][0]['pattern'] = [1] * (segment['number_of_bars']%2) + [2]*int(segment['number_of_bars']/2)
@@ -65,8 +73,8 @@ def generate_song():
     base_block['blocks'] = segments
     
     mid = generator.generate(base_block)
-    song_id = str(uuid.uuid4())
-    song_name = 'http_generated/' + 'generated_song_' + song_id
+    song_id = name_gen.generate_name(4, 7)
+    song_name = 'http_generated/' + haikunator.Haikunator.haikunate()
     song_path = generator.write_mid(mid, song_name, use_soundfont = 'soundfonts/FluidR3_GM.sf2')
     success = subprocess.check_output(['lame', song_path + '.wav'])
     return song_path + '.mp3'
@@ -76,7 +84,7 @@ def generate_segment(track_no):
         'track' : track_no,
         'play_at' : [0], 
         'number_of_beats_per_bar' : random.randint(3, 15), 
-        'bpm' : random.randrange(150, 270, 15),
+        'bpm' : random.randrange(150, 540, 15),
         'block_type' : 'complex', 
         'blocks' : []
     }
