@@ -13,3 +13,6 @@ web_app/*
 *.json
 *.sf2
 *test*
+MANIFEST
+dist/*
+ninopianino.egg*

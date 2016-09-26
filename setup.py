@@ -1,11 +1,11 @@
-from distutils.core import setup
+from setuptools import setup
 import os
 import subprocess
 
 def main():
     required_packages = ['fluidsynth', 'lame']
     for package in required_packages: 
-        subprocess.call(['apt-get', 'install', 'package'])
+        subprocess.call(['apt-get', 'install', package])
 
     if os.environ.get('get_soundfont'): 
         subprocess.call(['mkdir', 'soundfonts'])
@@ -14,11 +14,12 @@ def main():
 
     setup(
         name = 'ninopianino',
-        version = '0.1', 
+        version = '0.0.2', 
         description = 'Programmable music generator. ', 
         author = 'Nikola Dokoski', 
         author_email = 'ninodokoskiot@hotmail.com', 
         url = 'https://github.com/NinoDoko/nino_pianino', 
+        download_url = 'https://github.com/NinoDoko/nino_pianino/tarball/0.1'
         install_requires = [
             'pyhaikunator',
             'midiutil',
