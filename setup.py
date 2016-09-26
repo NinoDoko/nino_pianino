@@ -1,4 +1,4 @@
-from distutuls.core import setup
+from distutils.core import setup
 import os
 import subprocess
 
