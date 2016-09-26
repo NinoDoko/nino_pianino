@@ -21,6 +21,7 @@ def main():
         url = 'https://github.com/NinoDoko/nino_pianino', 
         install_requires = [
             'pyhaikunator',
+            'midiutil',
             ]
         )
 
