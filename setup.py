@@ -14,12 +14,13 @@ def main():
 
     setup(
         name = 'ninopianino',
+        packages = ['ninopianino'],
         version = '0.0.2', 
         description = 'Programmable music generator. ', 
         author = 'Nikola Dokoski', 
         author_email = 'ninodokoskiot@hotmail.com', 
         url = 'https://github.com/NinoDoko/nino_pianino', 
-        download_url = 'https://github.com/NinoDoko/nino_pianino/tarball/0.1'
+        download_url = 'https://github.com/NinoDoko/nino_pianino/tarball/0.1',
         install_requires = [
             'pyhaikunator',
             'midiutil',

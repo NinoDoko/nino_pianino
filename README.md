@@ -210,6 +210,15 @@ List of arguments:
     </li>
 </ul>
     
+    
+As of later versions, you can also just use song_generator.py. This assumes you have a soundfont. You can use it like this: 
+```
+    $python song_generator.py path/to/soundfont.sf2
+```
+
+And it should spit out a .mid, .wav and .mp3 file. If you don't have lame installed, it should still create the wav. If you have the FluidRM soundfont in a soundfonts/ directory, you can skip the argument. 
+
+Using this script generally creates kinda weird stuff though, and it's a work in progress. 
 <h2>
     Project overview
 </h2>
