@@ -6,7 +6,7 @@ def gen_notes_for_key(track, number_notes, root_note, scale, channel, duration =
     notes = []
     prev_note = k.generate_note(None, 3)
     while number_notes>0:
-        prev_note = k.generate_note(prev_note, 3, bias_same_note)
+        prev_note = k.generate_note(prev_note, 7, bias_same_note)
         notes.append(music_models.Note(channel = channel, track = track, note = prev_note, duration = duration, volume = 100)) 
         number_notes -= 1 
     return notes
@@ -37,7 +37,6 @@ def group_generic_notes(b, generic_notes, starting_point):
 def handle_block(b, mid):
 #        mid.addTrackName(b['track'], b['play_at'][0], b['name'])
     if b.get('repeat', 1) > 1:
-        print b['name']
         b['play_at'] += [i * b.get('number_of_beats_per_bar', 1) * b.get('number_of_bars') for i in range(1, b['repeat']+1)]
     if b.get('block_type') == 'complex' :
         mid.addTempo(b['track'], b['play_at'][0], b['bpm']) 
@@ -45,9 +44,6 @@ def handle_block(b, mid):
         
         for block in b['blocks']: 
             for key in b:
-                if type(block) != dict: 
-                    print block, type(block)
-                    print b['blocks']
                 if key not in block.keys() + ['blocks', 'block_type', 'play_at', 'repeat', 'number_of_blocks']:
                     block[key] = b[key]
             complex_track += handle_block(block, mid)
@@ -62,7 +58,6 @@ def handle_block(b, mid):
             entire_track += temp_track
     else:
         entire_track = []
-        print b.get('name')
         generic_notes = generate_generic_notes(b)       
             
         for starting_point in b['play_at']:
@@ -112,7 +107,6 @@ def write_mid(mid, output, use_soundfont = ''):
     mid.writeFile(binfile)
     binfile.close()
     if use_soundfont: 
-        print subprocess.check_output(['ls', 'soundfonts'])
         command = ['fluidsynth', '-F', output + '.wav', use_soundfont, output + '.mid']
         subprocess.call(command)
     return output
