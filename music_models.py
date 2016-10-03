@@ -4,7 +4,6 @@ base_notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
 notes_list = [x + y for y in  [str(i) for i in range(0, 9)] for x in base_notes]
 pitch_offset = 24
 
-
 def get_pitch(note):
     return notes_list.index(note) + pitch_offset
 
@@ -53,7 +52,7 @@ class Key:
         'locrian' : [0, 1, 3, 5, 6, 8, 10],
     }
     
-    def __init__(self, root_note = 'A', scale = 'minor', b_notes = [], notes_bias = {}, low_end = 'A2', high_end = 'G#6'):
+    def __init__(self, root_note = 'A', scale = 'minor', b_notes = [], notes_bias = {}, low_end = 'A2', high_end = 'G#6', markov_values = None):
         self.root_note = root_note
         root_note_index = base_notes.index(root_note)
         self.diffs = [(x + root_note_index)%len(base_notes) for x in self.keys_diffs[scale]]
@@ -67,26 +66,52 @@ class Key:
             self.base_notes = [base_notes[x] for x in self.diffs]
         else : 
             self.base_notes = b_notes
-       
-        self.notes = [[x] * self.base_notes.count(x[:-1]) for x in notes_list if x[:-1] in self.base_notes and notes_list.index(low_end) < notes_list.index(x) < notes_list.index(high_end)]
-#        print [[x] for x in notes_list if x[:-1] in self.base_notes]
+      
+        self.notes = [[x] * self.base_notes.count(x[:-1]) for x in notes_list if x[:-1] in self.base_notes and notes_list.index(low_end) <= notes_list.index(x) <= notes_list.index(high_end)]
         self.notes = [item for sublist in self.notes for item in sublist]
 
+        #Markov values are used for generating notes using Markov chains.  
+        #It's explained a bit better below, at the function. 
+        self.markov_values = markov_values
 
     #This function generates a note regarding the note_pivot it is given. 
     #A pivot is required so the notes chosen aren't just completely arbitrary, and so with a given pivot and radius, the generator will pick notes relatively close to each other. 
     #The bias_same_note is an int argument <100 that is a probability for the generator to choose the same note as the pivot. If using the note_timing module, notes with the same value are squished together, which is basically how you get notes of varying length. 
-    def generate_note(self, note_pivot = None, note_radius = 3, bias_same_note = 0, low_end = 'A0', high_end = 'G#8'):
+    def generate_note(self, note_pivot = None, note_radius = 3, bias_same_note = 0):
         if random.randint(0, 100) < bias_same_note and note_pivot: 
             return note_pivot
             
         if not note_pivot: 
             return random.choice(self.notes)
         else:
+            if self.markov_values:
+                return self.generate_note_markov(note_pivot)
             pivot_index = self.notes.index(note_pivot)
             
         note_index = random.randint(max(0, pivot_index - note_radius), min(pivot_index + note_radius, len(self.notes)-1))
         return self.notes[note_index]
+
+
+    #This function generates a note but by using markov chain principles instead. Basically, there is (or should be) a file containing values that help choose the note based on the previous one. The values are contained in a list like so : 
+    #markov_values = [[0.2, 0.1, 0.2, 0.05, ...], [0.1, 0.2, ...]] 
+    #Here, each list represents the values for a note (for instance, the 0th list represents the values for the 0th note in the scale), and each value in that list is the probability that that is the chosen note from the chain. More on this in the readme. 
+
+    def generate_note_markov(self, prev_note):
+        if not self.markov_values: 
+            print 'No markov values found, but tried to generate using Markov chains. '
+            print 'Ensure you are not using the Markov attribute, or include a markov_file and initialize the Key object with it. '
+            exit()
+        note_index = self.base_notes.index(prev_note[:-1])
+        note_candidates = self.markov_values[note_index]
+        r, s = random.random(), 0
+        for note in note_candidates:
+            s+= note
+            if s >= r: 
+                note_index = note_candidates.index(note)
+                return self.notes[note_index]
+        #If we get here, something wrong happened because at some point, s has to be greater than r. 
+        print 'Something went wrong at generating markov note, random int was ', r, ' and sum was ', s
+        exit()
 
 #A bar is a class containing several notes. The class is mainly used to accent notes. 
 #The accent_notes function receives a dictionary as an argument, but the user can manually set the accents property. 

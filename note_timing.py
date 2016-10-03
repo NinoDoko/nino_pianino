@@ -32,6 +32,10 @@ def group_notes_for_time_signature(notes, no_beats, bias_separate_notes = 0, acc
                     if random.randint(0, 100) < bias_separate_notes or j == no_beats : 
                         break
                 bar[i].duration = length
+                if length > 20:
+                    print 'Length exceeded!'
+                    print length
+                    exit()
                 bar[i].time = t
                 t += length
                 new_bar.append(bar[i])

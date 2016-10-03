@@ -6,6 +6,8 @@ import generator
 import haikunator
 import sys
 
+from sample_markov import markov_values
+
 def get_bounds(val, par_a, par_b, par_c, val_mul_a, val_mul_b):
     lower_bound = int(par_a * par_b/ (par_b - val*val_mul_a))
     higher_bound = int(par_c * par_b / val * val_mul_b)
@@ -66,6 +68,7 @@ def generate_song(**kwargs):
         percussion = template_utils.create_percussion(segment, no_hits = random.randint(2, 3), no_cymbals = random.randint(1, 3))
         percussion['blocks'][0]['pattern'] = [1] * (segment['number_of_beats_per_bar']%2) + [4]*int(segment['number_of_beats_per_bar']/4)
         percussion['blocks'][0]['default_accent'] = 60
+        percussion['markov_values'] = False
         
         print 'Segment ', i, ' from ', segment['play_at'], ' to ', segment['play_at'][0] + segment['number_of_bars'] * segment['number_of_beats_per_bar'], ' has program numbers ', [x.get('program_number') for x in segment['blocks']]
 #        return
@@ -78,6 +81,7 @@ def generate_song(**kwargs):
     
     base_block = template_utils.create_base_block()
     base_block['blocks'] = segments
+    base_block['markov_values'] = markov_values
     
     mid = generator.generate(base_block)
     song_name = kwargs.get('generate_dir', 'generated/') + haikunator.Haikunator.haikunate()

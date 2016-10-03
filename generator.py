@@ -1,8 +1,8 @@
 from midiutil.MidiFile import MIDIFile
 import music_models, argparse, random, note_timing, copy, json, subprocess
 
-def gen_notes_for_key(track, number_notes, root_note, scale, channel, duration = 1, bias_same_note = 0, low_end = 'A0', high_end = 'G#8', base_notes = [], notes_bias = {}):
-    k = music_models.Key(root_note, scale, base_notes, notes_bias, low_end, high_end)
+def gen_notes_for_key(track, number_notes, root_note, scale, channel, duration = 1, bias_same_note = 0, low_end = 'A0', high_end = 'G#8', base_notes = [], notes_bias = {}, markov_values = None):
+    k = music_models.Key(root_note, scale, base_notes, notes_bias, low_end, high_end, markov_values)
     notes = []
     prev_note = k.generate_note(None, 3)
     while number_notes>0:
@@ -19,7 +19,7 @@ def calculate_number_of_notes(block):
 
 def generate_generic_notes(b):
     number_of_notes = calculate_number_of_notes(b)
-    gen_notes_kwargs = {'track' : b['track'], 'channel' : b.get('channel', 1), 'number_notes' : number_of_notes, 'root_note' : b.get('root_note', 'A'), 'scale' : b.get('scale', 'minor'), 'bias_same_note' : b.get('bias_same_note'), 'high_end' : b.get('high_end', 'G#7'), 'low_end' : b.get('low_end', 'C1'), 'base_notes': b.get('base_notes'), 'notes_bias': b.get('notes_bias', {})}
+    gen_notes_kwargs = {'track' : b['track'], 'channel' : b.get('channel', 1), 'number_notes' : number_of_notes, 'root_note' : b.get('root_note', 'A'), 'scale' : b.get('scale', 'minor'), 'bias_same_note' : b.get('bias_same_note'), 'high_end' : b.get('high_end', 'G#7'), 'low_end' : b.get('low_end', 'C1'), 'base_notes': b.get('base_notes'), 'notes_bias': b.get('notes_bias', {}), 'markov_values' : b.get('markov_values')}
     generic_notes = gen_notes_for_key(**gen_notes_kwargs)
     return generic_notes
 
@@ -35,7 +35,6 @@ def group_generic_notes(b, generic_notes, starting_point):
 
 
 def handle_block(b, mid):
-#        mid.addTrackName(b['track'], b['play_at'][0], b['name'])
     if b.get('repeat', 1) > 1:
         b['play_at'] += [i * b.get('number_of_beats_per_bar', 1) * b.get('number_of_bars') for i in range(1, b['repeat']+1)]
     if b.get('block_type') == 'complex' :
