@@ -107,7 +107,7 @@ class Key:
         for note in note_candidates:
             s+= note
             if s >= r: 
-                note_index = note_candidates.index(note)
+                note_index = note_candidates.index(note) % len(self.notes)
                 return self.notes[note_index]
         #If we get here, something wrong happened because at some point, s has to be greater than r. 
         print 'Something went wrong at generating markov note, random int was ', r, ' and sum was ', s

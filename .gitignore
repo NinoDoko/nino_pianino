@@ -8,6 +8,7 @@ blocks/
 converted/
 soundfonts/
 http_converted/
+kindagood/
 web_app/*
 *.JSON
 *.json

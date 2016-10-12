@@ -2,11 +2,11 @@ import random
 from music_models import base_notes
 
 chord_progressions = [
-    [(0, 'major'), (5, 'major'), (7, 'major')], # 1-4-5 (C-F-G)
-    [(0, 'major'), (5, 'major'), (2, 'major')], # 1-5-2 (C-G-D)
-    [(0, 'major'), (9, 'minor'), (7, 'major'), (2, 'minor'), (2, 'major')], #1-6-5-2-2 (C-Am-G-Dm-D)
-    [(0, 'major'), (9, 'minor'), (2, 'minor'), (7, 'major')], #1-6-2-5 (C-Am-Dm-G)
-    [(0, 'major'), (7, 'major'), (2, 'minor'), (9, 'minor'), (5, 'major'), (5, 'minor')], #1-5-2-6-4-4 (C-G-Dm-Am-F-Fm)
+    [(0, 'major'), (5, 'major'), (7, 'major')], # I-IV-V (C-F-G)
+    [(0, 'major'), (5, 'major'), (2, 'major')], # I-V-II (C-G-D)
+    [(0, 'major'), (9, 'minor'), (7, 'major'), (2, 'minor'), (2, 'major')], #I-vi-VII-ii-II (C-Am-G-Dm-D)
+    [(0, 'major'), (9, 'minor'), (2, 'minor'), (7, 'major')], #I-vi-ii-V (C-Am-Dm-G)
+    [(0, 'major'), (7, 'major'), (2, 'minor'), (9, 'minor'), (5, 'major'), (5, 'minor')], #I-V-ii-vi-IV-iv (C-G-Dm-Am-F-Fm)
 ]
 
 

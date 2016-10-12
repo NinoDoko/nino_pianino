@@ -96,12 +96,6 @@ def generate(blocks, no_tracks = 100):
     note_fix_warning = True
     for bar in entire_track: 
         for note in bar.notes:
-            if note.duration> 10: 
-                if note_fix_warning: 
-                    print 'Found long note! ', note.duration
-                    print 'Will reduce note duration in an attempt to stop messy segments. if you want to stop this behaviour (you probably don\'t), add a --unfix_note argument when calling. '
-                    note_fix_warning = False
-                note.duration = 1
             mid.addNote(*note.get_values())                
 
     return mid
