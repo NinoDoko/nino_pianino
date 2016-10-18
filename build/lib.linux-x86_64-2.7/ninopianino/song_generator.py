@@ -83,9 +83,10 @@ def generate_song(**kwargs):
     
     base_block = template_utils.create_base_block()
     base_block['blocks'] = segments
-    markov_values_len = random.randint(8, 24)
-    markov_values = [[random.random() for x in range(markov_values_len)] for x in range(markov_values_len)]
-    markov_values = [[i / sum(x) for i in x] for x in markov_values]
+#    markov_values_len = random.randint(8, 24)
+#    markov_values = [[random.random() for x in range(markov_values_len)] for x in range(markov_values_len)]
+    new_values = [[random.random() + prob for prob in note_probs] for note_probs in markov_values]
+    new_values = [[i / sum(x) for i in x] for x in markov_values]
     base_block['markov_values'] = markov_values
     
     mid = generator.generate(base_block)
@@ -110,7 +111,7 @@ if __name__ == '__main__' :
     if len(sys.argv) == 2: 
         soundfont = sys.argv[1]
     else: 
-        soundfont = 'soundfonts/FluidR3_GM.sf2'
-    generate_song(instruments_range = [1, 2, 4, 20, 21, 23, 24, 27, 34, 37, 39, 45, 47, 56, 68], segment_instruments_range = [1, 5, 8, 10, 11, 17, 24, 26, 28, 32, 33, 35, 36, 38, 39, 41, 45, 46, 52, 53, 54, 58, 68, 70, 72, 75, 76, 77, 78, 85], soundfont = soundfont, generate_dir = 'http_generated/')
+        soundfont = '../soundfonts/FluidR3_GM.sf2'
+    generate_song(instruments_range = [1, 2, 4, 20, 21, 23, 24, 27, 34, 37, 39, 45, 47, 56, 68], segment_instruments_range = [1, 5, 8, 10, 11, 17, 24, 26, 28, 32, 33, 35, 36, 38, 39, 41, 45, 46, 52, 53, 54, 58, 68, 70, 72, 75, 76, 77, 78, 85], soundfont = soundfont, generate_dir = '../http_generated/')
 #    generate_song(soundfont = soundfont, generate_dir = 'http_generated/')
 
