@@ -109,6 +109,8 @@ def generate_song(**kwargs):
     mid = generator.generate(base_block)
     song_name = kwargs.get('generate_dir', 'generated/') + haikunator.Haikunator.haikunate()
     song_path = generator.write_mid(mid, song_name, use_soundfont = kwargs.get('soundfont', 'soundfonts/FluidR3_GM.sf2'))
+    if kwargs.get('get_mid'): 
+        return song_path + '.mid'
 #    song_path = generator.write_mid(mid, song_name, use_soundfont = 'soundfonts/ProTrax_Classical_Guitar.sf2')
     success = subprocess.check_output(['lame', song_path + '.wav'])
     return song_path + '.mp3'
@@ -125,11 +127,11 @@ def generate_segment(track_no, beats_per_bar_range, bpm_range):
     }
     return segment
 
-if __name__ == '__main__' :
+def main(argv):
     if len(sys.argv) > 2: 
-        soundfont = sys.argv[1]
-        if len(sys.argv) == 3: 
-            generate_dir = sys.argv[2]
+        soundfont = argv[1]
+        if len(argv) == 3: 
+            generate_dir = argv[2]
     else: 
         soundfont = '../soundfonts/FluidR3_GM.sf2'
         generate_dir = '../http_generated/'
@@ -138,3 +140,6 @@ if __name__ == '__main__' :
 
 #    generate_song(soundfont = soundfont, generate_dir = 'http_generated/')
 
+
+if __name__ == '__main__' :
+    main(sys.argv)

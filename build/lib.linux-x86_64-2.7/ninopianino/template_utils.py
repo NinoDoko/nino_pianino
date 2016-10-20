@@ -1,5 +1,5 @@
 import random
-from music_models import base_notes
+from music_models import base_notes, keys_diffs
 
 chord_progressions = [
     [(0, 'major'), (5, 'major'), (7, 'major')], # I-IV-V (C-F-G)
@@ -9,6 +9,10 @@ chord_progressions = [
     [(0, 'major'), (7, 'major'), (2, 'minor'), (9, 'minor'), (5, 'major'), (5, 'minor')], #I-V-ii-vi-IV-iv (C-G-Dm-Am-F-Fm)
 ]
 
+def index_progression_to_notes(root_note, progression):
+    print root_note, progression
+    return [(base_notes[(root_note + chord[0])%len(base_notes)], chord[1]) for chord in progression]
+    
 
 #You can pass root_note as either the index or the value of the note. 
 def generate_chord_progression(root_note):
@@ -16,10 +20,24 @@ def generate_chord_progression(root_note):
     if root_note in base_notes: 
         root_note = base_notes.index(root_note)
     #Here we assume root_note is the index of the root note. 
-    
-    progression = [(base_notes[(root_note + chord[0])%len(base_notes)], chord[1]) for chord in progression]
-    
+#    progression = [(base_notes[(root_note + chord[0])%len(base_notes)], chord[1]) for chord in progression]
+    progression = index_progression_to_notes(root_note, progression)
     return progression
+
+
+def generate_random_chord_progression(root_note, scale, number_of_chords, scale_choices = ['major', 'minor']):
+    scale_candidates = keys_diffs[scale]
+    if root_note in base_notes: 
+        root_note = base_notes.index(root_note)
+        print 'Finding index', root_note
+    else: 
+        print 'No index! ', root_note
+#    scale_candidates = [base_notes[(root_note + x)%len(base_notes)] for x in scale_candidates]
+    progression = [(scale, random.choice(scale_choices)) for scale in scale_candidates]
+    progression = index_progression_to_notes(root_note, progression)
+    return progression
+           
+        
            
 
 def create_base_block(bpm = 120, play_at = [0], name = 'base', track = 1):
