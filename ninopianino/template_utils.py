@@ -1,5 +1,6 @@
 import random
-from music_models import base_notes, keys_diffs
+from music_models import base_notes, keys_diffs, Key
+from generator import gen_notes_for_key
 
 chord_progressions = [
     [(0, 'major'), (5, 'major'), (7, 'major')], # I-IV-V (C-F-G)
@@ -10,7 +11,6 @@ chord_progressions = [
 ]
 
 def index_progression_to_notes(root_note, progression):
-    print root_note, progression
     return [(base_notes[(root_note + chord[0])%len(base_notes)], chord[1]) for chord in progression]
     
 
@@ -25,16 +25,29 @@ def generate_chord_progression(root_note):
     return progression
 
 
-def generate_random_chord_progression(root_note, scale, number_of_chords, scale_choices = ['major', 'minor']):
-    scale_candidates = keys_diffs[scale]
-    if root_note in base_notes: 
-        root_note = base_notes.index(root_note)
-        print 'Finding index', root_note
-    else: 
-        print 'No index! ', root_note
-#    scale_candidates = [base_notes[(root_note + x)%len(base_notes)] for x in scale_candidates]
-    progression = [(scale, random.choice(scale_choices)) for scale in scale_candidates]
-    progression = index_progression_to_notes(root_note, progression)
+def generate_random_chord_progression(root_note, scale, number_of_chords, scale_choices = ['major', 'minor'], markov_values = None):
+    root_key = Key(root_note = root_note, scale = scale)
+    root_key_base = root_key.base_notes
+
+    chord_notes = [x.note[:-1] for x in gen_notes_for_key(1, number_of_chords, root_note, scale, 1, markov_values)]
+    progression = []
+    
+    for note in chord_notes: 
+        keys_candidates = [Key(root_note = note, scale = scale) for scale in scale_choices]
+        
+        keys_candidates_ctrs = [(key.scale, len([x for x in key.base_notes if x in root_key.base_notes]) + 0.0 ) for key in keys_candidates]
+        key_candidates_probabilities = [(x[0], x[1]/sum([x[1] for x in keys_candidates_ctrs])) for x in keys_candidates_ctrs]
+
+        r, s = random.random(), 0
+        for key_prob in key_candidates_probabilities:
+            s += key_prob[1]
+            if s >= r: 
+                progression.append((note, key_prob[0]))
+                break
+ 
+
+#    progression = [(note,random.choice(scale_choices)) for note in chord_notes]
+
     return progression
            
         
@@ -93,3 +106,7 @@ def repeat_block(block, number_repeats, number_of_bars):
     for entry in play_at:
         result += [entry] + [entry + i * block.get('number_of_beats_per_bar', 1) * number_of_bars for i in range(1, number_repeats)]
     return result
+
+#from sample_markov import markov_values
+#generate_random_chord_progression('C', 'major', 5, markov_values = markov_values)
+

@@ -17,3 +17,4 @@ web_app/*
 MANIFEST
 dist/*
 ninopianino.egg*
+build/*

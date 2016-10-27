@@ -54,6 +54,7 @@ class Note:
 class Key:
     
     def __init__(self, root_note = 'A', scale = 'minor', b_notes = [], notes_bias = {}, low_end = 'A2', high_end = 'G#6', markov_values = None):
+        self.scale = scale
         self.keys_diffs = keys_diffs
         self.root_note = root_note
         root_note_index = base_notes.index(root_note)
