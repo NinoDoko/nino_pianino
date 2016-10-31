@@ -25,7 +25,8 @@ def generate_chord_progression(root_note):
     return progression
 
 
-def generate_random_chord_progression(root_note, scale, number_of_chords, scale_choices = ['major', 'minor'], markov_values = None):
+
+def generate_random_chord_progression(root_note, scale, number_of_chords, scale_choices = ['major', 'minor'], markov_values = None, exp_var = 4.0):
     root_key = Key(root_note = root_note, scale = scale)
     root_key_base = root_key.base_notes
 
@@ -35,7 +36,7 @@ def generate_random_chord_progression(root_note, scale, number_of_chords, scale_
     for note in chord_notes: 
         keys_candidates = [Key(root_note = note, scale = scale) for scale in scale_choices]
         
-        keys_candidates_ctrs = [(key.scale, len([x for x in key.base_notes if x in root_key.base_notes]) + 0.0 ) for key in keys_candidates]
+        keys_candidates_ctrs = [(key.scale, 0.0 + exp_var ** len([x for x in key.base_notes if x in root_key.base_notes])) for key in keys_candidates]
         key_candidates_probabilities = [(x[0], x[1]/sum([x[1] for x in keys_candidates_ctrs])) for x in keys_candidates_ctrs]
 
         r, s = random.random(), 0

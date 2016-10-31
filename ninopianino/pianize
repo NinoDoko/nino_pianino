@@ -14,8 +14,9 @@ def main():
     template_gen = sub_parsers.add_parser('use_template', description = 'Loads a json file and generates a song with it. How the json template looks is documented in the readme. ')
     template_gen.set_defaults(sub = 'template_gen')
 
-    song_gen.add_argument('--soundfont', help = "Path to the soundfont used to render the mid. If soundfont isn't supplied, the command won't work. ", required = True)
+    song_gen.add_argument('--soundfont', help = "Path to the soundfont used to render the mid. If soundfont isn't supplied, then you must use the --use_config argument and supply a 'soundfont' kwarg, otherwise the command won't work. ", default = None)
     song_gen.add_argument('--output', help = "Path where the song should be saved to. Defaults to /tmp. ", default = '/tmp/')
+    song_gen.add_argument('--use_config', help = "Path to the configuration. If you need help writing a config, refer to the readme. You must either use the --soundfont argument or supply the 'soundfont' kwarg in the config. ")
 
     template_gen.add_argument('--input', help = 'Path to the json template. ', required = True)
     template_gen.add_argument('--soundfont', help = 'Path to the soundfont. Will not work without a soundfont. ', required = True)
@@ -26,7 +27,18 @@ def main():
     args = parser.parse_args()
 
     if args.sub == 'song_gen':
-        song_generator.generate_song(instruments_range = [1, 2, 4, 20, 21, 23, 24, 27, 34, 37, 39, 45, 47, 56, 68], segment_instruments_range = [1, 5, 8, 10, 11, 17, 24, 26, 28, 32, 33, 35, 36, 38, 39, 41, 45, 46, 52, 53, 54, 58, 68, 70, 72, 75, 76, 77, 78, 85], soundfont = args.soundfont, generate_dir = args.output)
+        kwargs = {}
+        if args.use_config:
+            with open(args.use_config, 'r') as f:
+                kwargs = json.loads(f.read())
+        if not args.soundfont and not kwargs.get('soundfont'): 
+            print "No soundfont specified. Please either use the --soundfont argument or supply a 'soundfont' argument in your config. "
+            exit()
+        if args.soundfont:
+            kwargs['soundfont'] = args.soundfont
+        if args.output != '/tmp/': 
+            kwargs['generate_dir'] = args.output
+        song_generator.generate_song(**kwargs)
 
     elif args.sub == 'template_gen':
         output = args.output

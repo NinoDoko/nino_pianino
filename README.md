@@ -15,6 +15,32 @@ This program uses the Midiutil package to add notes to a midi track. I included 
 Disclaimer: I'm still a novice in software programming. Smelly code and lacking documentation may be present, but do feel free to drop good criticism so I can improve the project and my future endeavours. Of course, if you would want to do so :)
 
 <h2>
+    Installation
+</h2>
+
+You can clone this repo and use the setup.py file. 
+
+```
+    $git clone https://github.com/NinoDoko/nino_pianino.git
+    $cd nino_pianino
+    $python setup.py install  #might need su privileges for this
+```
+
+It's also on pip. 
+
+```
+    $pip install ninopianino  #you probably need to use sudo for this too
+```
+
+If you do this, you should be able to use the cli. 
+
+```
+pianize generate_song --soundfont /path/to/soundfont.sf2 --output ~/path/to/some/directory/
+```
+
+
+
+<h2>
     Templates
 </h2>
 Example templates can be found in the test_templates/ dir. complextest.json shows off a simple complex_block, nestedcomplextest.json is a more complicated composition of multiple complex blocks, some of which contain nested complex blocks. And finally, 32_beats_test.json uses the previously mentioned complex and nested blocks, but also uses channels and progam_numbers to add a flute and percussions. 
@@ -198,6 +224,8 @@ Or, to save on a few keystrokes, there is an argument you can use for this:
     $python generator.py --input blocks/longsongtest.json --output myfirstsong --use_soundfont /path/to/file.sf2
 ```
 
+
+
 Alternatively, if you cleanly organized your template into tracks, you can import it into actual music editing software, like rosegarden or lmms. 
 
 List of arguments: 
@@ -218,7 +246,15 @@ As of later versions, you can also just use song_generator.py. This assumes you 
 
 And it should spit out a .mid, .wav and .mp3 file. If you don't have lame installed, it should still create the wav. If you have the FluidRM soundfont in a soundfonts/ directory, you can skip the argument. 
 
+Or, if you used the setup.py script, you can use the cli. 
+
+```
+$pianize generate_song --soundfont /path/to/soundfont.sf2 --output ~/path/to/some/directory/
+```
+
+
 Using this script generally creates kinda weird stuff though, and it's a work in progress. 
+
 <h2>
     Project overview
 </h2>

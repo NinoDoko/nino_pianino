@@ -35,11 +35,13 @@ def shuffle_segments(segments, segment_number_range = range(1, 3)):
 
 def generate_song(**kwargs):
     song_root_note = random.choice(template_utils.base_notes)
-    number_of_segments = kwargs.get('number_of_segments', random.randint(3, 7))
-    
-    segments = [generate_segment(x, range(3, 15 ), range(150, 540, 15)) for x in range(number_of_segments)]
+    number_of_segments = random.choice(kwargs.get('number_of_segments_range', random.randint(3, 7)))
 
-    song_instruments = [random.choice(kwargs.get('instruments_range', range(0, 90))) for i in range(random.randint(1, 3))]
+    bpm_range = kwargs.get('bpm_range', range(150, 540, 15))
+    
+    segments = [generate_segment(x, range(3, 15), bpm_range) for x in range(number_of_segments)]
+
+    song_instruments = [random.choice(kwargs.get('instruments_range', range(0, 90))) for i in range(1, kwargs.get('number_of_song_instruments', range(random.randint(1, 3))))]
         
     for i in range(len(segments)):
         song_root_note = random.choice(template_utils.base_notes)
@@ -57,17 +59,17 @@ def generate_song(**kwargs):
             
             segment['default_accent'] = prev['default_accent'] + random.randint(lower_accent_bound, higher_accent_bound)
         else: 
-            segment['default_accent'] = random.choice(kwargs.get('default_accent_range', range(45, 55)))
+            segment['default_accent'] = random.choice(kwargs.get('default_accent_range', range(65, 85)))
 
-        number_segment_instruments_range = kwargs.get('no_segment_instruments', range(1, 5 - len(song_instruments)))
+        number_segment_instruments_range = kwargs.get('no_segment_instruments_range', range(1, 5 - len(song_instruments)))
         number_segment_instruments = random.choice(number_segment_instruments_range)
         
         segment_instruments_range = kwargs.get('segment_instruments_range', range(0, 90))
         segment_instruments = song_instruments + [random.choice(segment_instruments_range) for i in range(number_segment_instruments)]
         
-        chords = template_utils.generate_random_chord_progression(song_root_note,'major',  random.randint(3, 8), scale_choices = ['major', 'minor', 'blues'], markov_values = markov_values)
+        chords = template_utils.generate_random_chord_progression(song_root_note,'major',  random.randint(3, 8), scale_choices = ['major', 'minor', 'blues'], markov_values = markov_values, exp_var = kwargs.get('chord_exp_var', 5))
         segment['number_of_bars'] = len(chords) * random.choice(kwargs.get('number_segment_bars_range', range(1, 3)))
-        segment['bias_same_note'] = random.choice(kwargs.get('block_same_note_range', range(10, 100, 15)))
+#        segment['bias_same_note'] = random.choice(kwargs.get('block_same_note_range', range(10, 100, 15)))
         
         for instrument in range(len(segment_instruments)):
             #TODO args for low_end and high_end
@@ -78,7 +80,7 @@ def generate_song(**kwargs):
             print segment_channel
             if segment_channel == 10: segment_channel = instrument + len(segments)*len(segment_instruments) + 1 
                             
-            segment['blocks'] += template_utils.create_chord_progression(segment, chords = chords, extra_kwargs = {'low_end' : song_root_note + str(low_end), 'high_end' : song_root_note + str(high_end), 'channel' : segment_channel , 'program_number' : segment_instruments[instrument], 'default_accent' : segment['default_accent'] + random.choice(kwargs.get('block_default_accent_range', range(-5, 5))), 'bias_notes' : {'0' : 3, '4' : 3, '7' : 3}})
+            segment['blocks'] += template_utils.create_chord_progression(segment, chords = chords, extra_kwargs = {'low_end' : song_root_note + str(low_end), 'high_end' : song_root_note + str(high_end), 'channel' : segment_channel , 'program_number' : segment_instruments[instrument], 'default_accent' : segment['default_accent'] + random.choice(kwargs.get('block_default_accent_range', range(-5, 5))), 'bias_same_note' : random.choice(kwargs.get('block_same_note_range', range(10, 100, 15)))})
 
             for block in segment['blocks']:
                 if random.random() < kwargs.get('segment_instrument_pattern_chance', 0.5):
@@ -92,7 +94,7 @@ def generate_song(**kwargs):
        
         percussion = template_utils.create_percussion(segment, no_hits = random.randint(2, 3), no_cymbals = random.randint(1, 3))
         percussion['blocks'][0]['pattern'] = [1] * (segment['number_of_beats_per_bar']%2) + [4]*int(segment['number_of_beats_per_bar']/4)
-        percussion['blocks'][0]['default_accent'] = 60
+        percussion['blocks'][0]['default_accent'] = 100
         percussion['markov_values'] = False
        
  
@@ -138,7 +140,7 @@ def generate_segment(track_no, beats_per_bar_range, bpm_range):
     return segment
 
 def main(argv):
-    if len(sys.argv) > 2: 
+    if len(argv) > 2: 
         soundfont = argv[1]
         if len(argv) == 3: 
             generate_dir = argv[2]
