@@ -41,7 +41,8 @@ def generate_song(**kwargs):
     
     segments = [generate_segment(x, range(3, 15), bpm_range) for x in range(number_of_segments)]
 
-    song_instruments = [random.choice(kwargs.get('instruments_range', range(0, 90))) for i in range(1, kwargs.get('number_of_song_instruments', range(random.randint(1, 3))))]
+    number_of_instruments = random.choice(kwargs.get('number_of_song_instruments_range', range(1, random.randint(1, 3))))
+    song_instruments = [random.choice(kwargs.get('instruments_range', range(0, 90))) for i in range(1, number_of_instruments)]
         
     for i in range(len(segments)):
         song_root_note = random.choice(template_utils.base_notes)
@@ -83,30 +84,25 @@ def generate_song(**kwargs):
             segment['blocks'] += template_utils.create_chord_progression(segment, chords = chords, extra_kwargs = {'low_end' : song_root_note + str(low_end), 'high_end' : song_root_note + str(high_end), 'channel' : segment_channel , 'program_number' : segment_instruments[instrument], 'default_accent' : segment['default_accent'] + random.choice(kwargs.get('block_default_accent_range', range(-5, 5))), 'bias_same_note' : random.choice(kwargs.get('block_same_note_range', range(10, 100, 15)))})
 
             for block in segment['blocks']:
-                if random.random() < kwargs.get('segment_instrument_pattern_chance', 0.5):
-                    pattern_sum = segment['number_of_beats_per_bar']
-                    pattern = []
-                    while sum(pattern) < pattern_sum:
-                        pattern.append(min(random.choice(range(1, kwargs.get('pattern_note_len_range', 4))), pattern_sum - sum(pattern)))
-                    print 'Generated a pattern: ', pattern
-                    block['pattern'] = pattern
+                pattern = template_utils.generate_pattern(segment, kwargs.get('segment_instrument_pattern_chance', 0.5), kwargs.get('pattern_note_len_range', 4))
+                block['pattern'] = pattern
 
        
         percussion = template_utils.create_percussion(segment, no_hits = random.randint(2, 3), no_cymbals = random.randint(1, 3))
         percussion['blocks'][0]['pattern'] = [1] * (segment['number_of_beats_per_bar']%2) + [4]*int(segment['number_of_beats_per_bar']/4)
         percussion['blocks'][0]['default_accent'] = 100
         percussion['markov_values'] = False
-       
- 
-#        print 'Segment ', i, ' from ', segment['play_at'], ' to ', segment['play_at'][-1] + segment['number_of_bars'] * segment['number_of_beats_per_bar'], ' times and has program numbers ', [x.get('program_number') for x in segment['blocks']]
 
         for block in percussion['blocks'][1:]: 
+            pattern = template_utils.generate_pattern(segment, 1, kwargs.get('pattern_note_len_range', 4))
+            block['pattern'] = pattern
+            print 'Pattern for percussion for segment ', segment['track'], ' is ', block['pattern']
             block['bias_same_note'] = random.choice(kwargs.get('percussion_bias_same_note', range(30, 90, 5)))
             block['default_accent'] = segment['default_accent'] + random.randint(-5, 5)
             
         segment['blocks'].append(percussion)
     
-    segments = shuffle_segments(segments)
+    segments = shuffle_segments(segments, kwargs.get('segment_shuffle_range', range(1, 3)))
     print 'Printing segments again because fuck me. '
     for segment in segments: 
         print 'Segment ', segment['track'], ' has play at: ', segment['play_at'], ' plays until ', segment['play_at'][0] + segment['number_of_bars'] * segment['number_of_beats_per_bar']

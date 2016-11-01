@@ -1,7 +1,6 @@
 import random, json
 
 
-number_of_song_instruments = random.randint(1, 3)
 nino_dir = '/home/ninodoko/musicgenerator'
 def main():
     kwargs = {
@@ -13,16 +12,16 @@ def main():
         'instruments_range' : [1, 2, 4, 20, 21, 23, 24, 27, 34, 37, 39, 45, 47, 56, 68],
 
         #The number of instruments that will be active throughout the song. 
-        'number_of_song_instruments' : number_of_song_instruments,
+        'number_of_song_instruments_range' : range(1, 4),
 
         #Each segment will have a different accent from the previous, determined by a random value from this list. 
         'accent_offset' : range(-5, 5),
 
         #A list from accents from which segments will receive their base accent. 
-        'default_accent_range' : range(65, 85),
+        'default_accent_range' : range(75, 95),
 
         #Number of extra instruments per segment. 
-        'no_segment_instruments_range' : range(1, random.randint(1, 5 - number_of_song_instruments)),
+        'no_segment_instruments_range' : range(1, 6),
 
         #Instruments range for the segment specific instruments.
         'segment_instruments_range' : [1, 5, 8, 10, 11, 17, 24, 26, 28, 32, 33, 35, 36, 38, 39, 41, 45, 46, 52, 53, 54, 58, 68, 70, 72, 75, 76, 77, 78, 85],
@@ -50,6 +49,9 @@ def main():
 
         #The directory for the soundfont. This is an example, and should be supplied for specific use cases. 
         'soundfont' :  nino_dir + '/soundfonts/FluidR3_GM.sf2',
+
+        #The song generator will randomly repeat segments and then shuffle them. This is range of the numbers of repeats for each segment. 
+        'segment_shuffle_range' : range(1, 6),
 
     }
 
