@@ -4,15 +4,22 @@ import random, json
 nino_dir = '/home/ninodoko/musicgenerator'
 def main():
     kwargs = {
+        #What the general scale for the shond should be - chosen randomly from this list. 
+        'song_scale' : ['major', 'minor'],
 
         #How many segments the song has. 
         'number_of_segments_range' : range(3, 7),
 
+        #A range for beats per bar for each segment. Will choose randomly. 
+        'beats_per_bar_range' : range(3, 13),
+
+        #A range for how many chords each segment should have. Chooses randomly from this list. 
+        'chords_per_segment_range': range(2, 5), 
         #A list containing the program numbers of instruments that should be used. The program will choose randomly from these. 
-        'instruments_range' : [1, 2, 4, 20, 21, 23, 24, 27, 34, 37, 39, 45, 47, 56, 68],
+        'instruments_range' : [1, 2, 4, 7, 19, 24, 26, 32, 33, 38, 45, 46, 80,  82],
 
         #The number of instruments that will be active throughout the song. 
-        'number_of_song_instruments_range' : range(1, 4),
+        'number_of_song_instruments_range' : range(2, 6),
 
         #Each segment will have a different accent from the previous, determined by a random value from this list. 
         'accent_offset' : range(-5, 5),
@@ -21,10 +28,10 @@ def main():
         'default_accent_range' : range(75, 95),
 
         #Number of extra instruments per segment. 
-        'no_segment_instruments_range' : range(1, 6),
+        'no_segment_instruments_range' : range(0, 2),
 
         #Instruments range for the segment specific instruments.
-        'segment_instruments_range' : [1, 5, 8, 10, 11, 17, 24, 26, 28, 32, 33, 35, 36, 38, 39, 41, 45, 46, 52, 53, 54, 58, 68, 70, 72, 75, 76, 77, 78, 85],
+        'segment_instruments_range' : [1, 4, 10, 12, 24, 26, 32, 33, 34, 35, 36, 37, 39, 41, 42, 45, 46, 58, 66, 74, 75, 76, 78],
 
         #Range for the number of bars per segment. Will choose randomly from this list. 
         'number_segment_bars_range' : [1, 2, 3],
@@ -50,8 +57,17 @@ def main():
         #The directory for the soundfont. This is an example, and should be supplied for specific use cases. 
         'soundfont' :  nino_dir + '/soundfonts/FluidR3_GM.sf2',
 
-        #The song generator will randomly repeat segments and then shuffle them. This is range of the numbers of repeats for each segment. 
-        'segment_shuffle_range' : range(1, 6),
+        #The song generator will randomly repeat segments and then shuffle them. This is a range of the numbers of repeats for each segment. 
+        'segment_shuffle_range' : range(2, 5),
+
+        #This variable basically specifies how often the randomly generated chords will contain a chord vastly different from the generic chord. For instance, how commonly a chord progression for a song in C major to contain a chord in F minor. Higher values mean more generic chords. 
+        'chord_exp_var': 3,
+
+        #We may want to have segments with few instruments and no drums. This is the percentage that there are drums if the number of instruments is below the defined treshold. 
+        'segment_percussion_chance': 0.85,
+
+        #If there's less than this many instruments in a segment, there's a chance (defined above) that there will be no percussion for that segment. 
+        'skip_percussion_treshold' : 3,
 
     }
 

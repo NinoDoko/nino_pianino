@@ -40,8 +40,8 @@ def handle_block(b, mid):
     if b.get('block_type') == 'complex' :
         mid.addTempo(b['track'], b['play_at'][0], b['bpm']) 
         complex_track = []
-        
         for block in b['blocks']: 
+            if not block: continue 
             for key in b:
                 if key not in block.keys() + ['blocks', 'block_type', 'play_at', 'repeat', 'number_of_blocks']:
                     block[key] = b[key]

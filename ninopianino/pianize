@@ -36,6 +36,7 @@ def main():
             exit()
         if args.soundfont:
             kwargs['soundfont'] = args.soundfont
+            print 'Setting soundfont to : ', args.soundfont
         if args.output != '/tmp/': 
             kwargs['generate_dir'] = args.output
         song_generator.generate_song(**kwargs)
