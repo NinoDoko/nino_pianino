@@ -54,7 +54,7 @@ def create_segment_percussion(segment, kwargs):
     percussion['markov_values'] = False
 
     for block in percussion['blocks'][1:]: 
-        pattern = template_utils.generate_pattern(segment, 1, kwargs.get('pattern_note_len_range', 4))
+        pattern = template_utils.generate_pattern(segment, 1, kwargs.get('pattern_note_min_len_range', 1) , kwargs.get('pattern_note_len_range', 4))
         block['pattern'] = pattern
         block['bias_same_note'] = random.choice(kwargs.get('percussion_bias_same_note', range(30, 90, 5)))
         block['default_accent'] = segment['default_accent'] + random.randint(-5, 5)
@@ -65,13 +65,14 @@ def generate_song(**kwargs):
     song_root_note = random.choice(template_utils.base_notes)
     song_chord = random.choice(kwargs.get('song_scale', ['major', 'minor']))
     number_of_segments = random.choice(kwargs.get('number_of_segments_range', random.randint(3, 7)))
-
+    print 'Number of segments : ', number_of_segments
     bpm_range = kwargs.get('bpm_range', range(150, 540, 15))
     
     segments = [generate_segment(x, kwargs.get('beats_per_bar_range', range(3, 15)), bpm_range) for x in range(number_of_segments)]
 
     number_of_instruments = random.choice(kwargs.get('number_of_song_instruments_range', range(1, random.randint(1, 3))))
     song_instruments = [random.choice(kwargs.get('instruments_range', range(0, 90))) for i in range(1, number_of_instruments)]
+    print 'Song instruments are : ', song_instruments
         
     for i in range(len(segments)):
         song_root_note = random.choice(template_utils.base_notes)
@@ -87,7 +88,7 @@ def generate_song(**kwargs):
             segment['bpm'] = prev['bpm'] + random.randint(lower_bpm_bound, higher_bpm_bound)
             lower_accent_bound, higher_accent_bound = kwargs.get('default_accent_bounds', get_bounds(prev['default_accent'], -3, 100, 4, 0.9, 0.9))
             
-            segment['default_accent'] = prev['default_accent'] + random.randint(lower_accent_bound, higher_accent_bound)
+            segment['default_accent'] = min(prev['default_accent'] + random.randint(lower_accent_bound, higher_accent_bound), kwargs.get('max_base_default_accent', 100))
         else: 
             segment['default_accent'] = random.choice(kwargs.get('default_accent_range', range(65, 85)))
 
@@ -97,6 +98,8 @@ def generate_song(**kwargs):
         segment_instruments_range = kwargs.get('segment_instruments_range', range(0, 90))
         segment_instruments = song_instruments + [random.choice(segment_instruments_range) for i in range(number_segment_instruments)]
         
+        print 'Instruments for ', segment['track'], ' are : ', segment_instruments
+
         chords = template_utils.generate_random_chord_progression(song_root_note, song_chord,  random.choice(kwargs.get('chords_per_segment_range', range(3, 8))), scale_choices = ['major', 'minor', 'blues'], markov_values = markov_values, exp_var = kwargs.get('chord_exp_var', 5))
         segment['number_of_bars'] = len(chords) * random.choice(kwargs.get('number_segment_bars_range', range(1, 3)))
         
@@ -111,7 +114,7 @@ def generate_song(**kwargs):
             segment['blocks'] += template_utils.create_chord_progression(segment, chords = chords, extra_kwargs = {'low_end' : song_root_note + str(low_end), 'high_end' : song_root_note + str(high_end), 'channel' : segment_channel , 'program_number' : segment_instruments[instrument], 'default_accent' : segment['default_accent'] + random.choice(kwargs.get('block_default_accent_range', range(-5, 5))), 'bias_same_note' : random.choice(kwargs.get('block_same_note_range', range(10, 100, 15)))})
 
             for block in segment['blocks']:
-                pattern = template_utils.generate_pattern(segment, kwargs.get('segment_instrument_pattern_chance', 0.5), kwargs.get('pattern_note_len_range', 4))
+                pattern = template_utils.generate_pattern(segment, kwargs.get('segment_instrument_pattern_chance', 0.5), kwargs.get('pattern_note_min_len_range', 1), kwargs.get('pattern_note_len_range', 4))
                 block['pattern'] = pattern
 
         do_percussion = random.random()
