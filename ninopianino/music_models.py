@@ -76,6 +76,14 @@ class Key:
         #Markov values are used for generating notes using Markov chains.  
         #It's explained a bit better below, at the function. 
         self.markov_values = markov_values
+        if markov_values: 
+            depth = lambda L: isinstance(L, list) and max(map(depth, L)) +1 
+            markov_depth = depth(markov_values)
+            self.markov_prev_notes = [self.notes.index(self.generate_note(None, 3)) for i in range(markov_depth-1)]
+            print 'Depth is : ', markov_depth
+            print self.markov_prev_notes
+
+
 
     #This function generates a note regarding the note_pivot it is given. 
     #A pivot is required so the notes chosen aren't just completely arbitrary, and so with a given pivot and radius, the generator will pick notes relatively close to each other. 
@@ -98,19 +106,26 @@ class Key:
     #This function generates a note but by using markov chain principles instead. Basically, there is (or should be) a file containing values that help choose the note based on the previous one. The values are contained in a list like so : 
     #markov_values = [[0.2, 0.1, 0.2, 0.05, ...], [0.1, 0.2, ...]] 
     #Here, each list represents the values for a note (for instance, the 0th list represents the values for the 0th note in the scale), and each value in that list is the probability that that is the chosen note from the chain. More on this in the readme. 
+    #As of a recent update, you can have multiple layers in the chains. 
 
     def generate_note_markov(self, prev_note):
         if not self.markov_values: 
             print 'No markov values found, but tried to generate using Markov chains. '
             print 'Ensure you are not using the Markov attribute, or include a markov_file and initialize the Key object with it. '
             exit()
+        prev_notes = self.markov_prev_notes[1:] + [self.notes.index(prev_note)]
         note_index = self.base_notes.index(prev_note[:-1])
-        note_candidates = self.markov_values[note_index]
+        note_table = self.markov_values
+
+        for note in prev_notes: 
+            note_table = note_table[note]
+
+        print note_table
         r, s = random.random(), 0
-        for note in note_candidates:
+        for note in note_table:
             s+= note
             if s >= r: 
-                note_index = note_candidates.index(note) % len(self.notes)
+                note_index = note_table.index(note) % len(self.notes)
                 return self.notes[note_index]
         #If we get here, something wrong happened because at some point, s has to be greater than r. 
         print 'Something went wrong at generating markov note, random int was ', r, ' and sum was ', s

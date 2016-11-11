@@ -131,8 +131,8 @@ def generate_song(**kwargs):
     base_block = template_utils.create_base_block()
 
     base_block['blocks'] = segments
-    new_values = [[random.random() + prob for prob in note_probs] for note_probs in markov_values]
-    new_values = [[i / sum(x) for i in x] for x in markov_values]
+#    new_values = [[random.random() + prob for prob in note_probs] for note_probs in markov_values]
+#    new_values = [[i / sum(x) for i in x] for x in markov_values]
     base_block['markov_values'] = markov_values
     
     mid = generator.generate(base_block)

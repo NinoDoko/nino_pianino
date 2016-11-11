@@ -1,4 +1,4 @@
-smarkov_values = [
+markov_values = [
     [0.1, 0.05, 0.15, 0.1, 0.15, 0.1, 0.1, 0.05, 0.015, 0.05, 0.015, 0.05, 0.03, 0.02, 0.02],
     [0.1, 0.05, 0.05, 0.1, 0.2, 0.15, 0.05, 0.05, 0.02, 0.05, 0.02, 0.03, 0.04, 0.04, 0.05],
     [0.1, 0.05, 0.05, 0.1, 0.15, 0.1, 0.1, 0.1, 0.015, 0.05, 0.025, 0.04, 0.04, 0.04, 0.04],
@@ -17,8 +17,8 @@ smarkov_values = [
     [0.01, 0.01, 0.01, 0.02, 0.075, 0.075, 0.05, 0.1, 0.1, 0.13, 0.13, 0.13, 0.075, 0.075, 0.01],
 ]
 
-import json
-with open('results.json') as f: 
-    new_results = json.loads(f.read())
+#import json
+#with open('results.json') as f: 
+#    new_results = json.loads(f.read())
 
-markov_values = new_results
+#markov_values = new_results
