@@ -8,20 +8,20 @@ def main():
         'song_scale' : ['major', 'minor'],
 
         #How many segments the song has. 
-        'number_of_segments_range' : range(2, 7),
+        'number_of_segments_range' : range(4, 9),
 
         #A range for beats per bar for each segment. Will choose randomly. 
         'beats_per_bar_range' : range(3, 13),
 
         #A range for how many chords each segment should have. Chooses randomly from this list. 
-        'chords_per_segment_range': range(2, 7), 
+        'chords_per_segment_range': range(2, 5), 
 
         #A list containing the program numbers of instruments that should be used. The program will choose randomly from these. 
 #        'instruments_range' : range(1, 20),
         'instruments_range' : [1, 2, 4, 7, 26, 32, 33, 45, 46, 82],
 
         #The number of instruments that will be active throughout the song. 
-        'number_of_song_instruments_range' : range(1, 4),
+        'number_of_song_instruments_range' : range(2, 5),
 
         #Number of main instruments per segment
         'number_main_instruments' : 1,
@@ -39,20 +39,20 @@ def main():
         'accent_offset' : range(-5, 5),
 
         #A list from accents from which segments will receive their base accent. 
-        'default_accent_range' : range(40, 55),
+        'default_accent_range' : range(70, 85),
 
         #Volume to be added to percussions. 
         'percussion_accent_offset' : 10,
 
         #Number of extra instruments per segment. 
-        'no_segment_instruments_range' : range(1, 5),
+        'no_segment_instruments_range' : range(1, 3),
 
         #Instruments range for the segment specific instruments.
 #        'segment_instruments_range' : range(1, 20),
         'segment_instruments_range' : [1, 4, 10, 12, 24, 26, 32, 33, 34, 35, 41, 42, 45, 46, 58, 74, 75, 76, 78],
 
         #Range for the number of bars per segment. Will choose randomly from this list. 
-        'number_segment_bars_range' : range(2, 9),
+        'number_segment_bars_range' : range(2, 7),
 
         #Accent range offset for instrument specific blocks. 
         'block_default_accent_range' :  range(-5, 5),
@@ -67,14 +67,14 @@ def main():
         'pattern_note_len_range' :  5,
         
         #And the lower range for how long the note can last. Should not be less than 1. 
-        'pattern_note_min_len_range' : 2,
+        'pattern_note_min_len_range' : 1,
 
         #List for possible values for the bias_same_note for percussions per segment. 
         'percussion_bias_same_note' : range(30, 90, 5),
 
         #The same min and max values, but only for percussions. 
-        'pattern_percussion_min_len_range':  1,
-        'pattern_percussion_len_range': 3,
+        'pattern_percussion_min_len_range':  2,
+        'pattern_percussion_len_range': 4,
 
         #The dir where the songs are saved. 
         'generate_dir' :  nino_dir + '/nino_gen_10/',
@@ -94,7 +94,7 @@ def main():
         'max_base_default_accent' : 80,
 
         #This variable basically specifies how often the randomly generated chords will contain a chord vastly different from the generic chord. For instance, how commonly a chord progression for a song in C major to contain a chord in F minor. Higher values mean more generic chords. 
-        'chord_exp_var': 4,
+        'chord_exp_var': 3,
 
         #We may want to have segments with few instruments and no drums. This is the percentage that there are drums if the number of instruments is below the defined treshold. 
         'segment_percussion_chance': 0.85,
