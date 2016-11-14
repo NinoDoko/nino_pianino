@@ -10,13 +10,12 @@ chord_progressions = [
     [(0, 'major'), (7, 'major'), (2, 'minor'), (9, 'minor'), (5, 'major'), (5, 'minor')], #I-V-ii-vi-IV-iv (C-G-Dm-Am-F-Fm)
 ]
 
-def generate_pattern(block, pattern_chance = 0.5, min_note_len = 1, max_note_len = 4):
-    if random.random() < pattern_chance:
-        pattern_sum = block['number_of_beats_per_bar']
-        pattern = []
-        while sum(pattern) < pattern_sum:
-            pattern.append(min(random.randint(min_note_len, max_note_len), pattern_sum - sum(pattern)))
-        return pattern
+def generate_pattern(block, min_note_len = 1, max_note_len = 4):
+    pattern_sum = block['number_of_beats_per_bar']
+    pattern = []
+    while sum(pattern) < pattern_sum:
+        pattern.append(min(random.randint(min_note_len, max_note_len), pattern_sum - sum(pattern)))
+    return pattern
 
 def index_progression_to_notes(root_note, progression):
     return [(base_notes[(root_note + chord[0])%len(base_notes)], chord[1]) for chord in progression]

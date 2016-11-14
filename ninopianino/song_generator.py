@@ -48,16 +48,17 @@ def shuffle_play_at(segments, segment_number_range = range(1, 3)):
     
 
 def create_segment_percussion(segment, kwargs):
-    percussion = template_utils.create_percussion(segment, no_hits = random.randint(1, 3), no_cymbals = random.randint(1, 3))
+    percussion = template_utils.create_percussion(segment, no_hits = random.randint(2, 3), no_cymbals = random.randint(1, 3))
     percussion['blocks'][0]['pattern'] = [1] * (segment['number_of_beats_per_bar']%2) + [4]*int(segment['number_of_beats_per_bar']/4)
     percussion['blocks'][0]['default_accent'] = 100
     percussion['markov_values'] = False
 
     for block in percussion['blocks'][1:]: 
-        pattern = template_utils.generate_pattern(segment, 1, kwargs.get('pattern_note_min_len_range', 1) , kwargs.get('pattern_note_len_range', 4))
+        pattern = template_utils.generate_pattern(segment, kwargs.get('pattern_percussion_min_len_range', 1) , kwargs.get('pattern_percussion_len_range', 4))
+        print 'Percussion pattern : ', pattern
         block['pattern'] = pattern
         block['bias_same_note'] = random.choice(kwargs.get('percussion_bias_same_note', range(30, 90, 5)))
-        block['default_accent'] = segment['default_accent'] + random.randint(-5, 5)
+        block['default_accent'] = segment['default_accent'] + random.randint(-5, 5) + kwargs.get('percussion_accent_offset', 20)
     return percussion
 
 
@@ -97,7 +98,6 @@ def generate_song(**kwargs):
         
         segment_instruments_range = kwargs.get('segment_instruments_range', range(0, 90))
         segment_instruments = song_instruments + [random.choice(segment_instruments_range) for i in range(number_segment_instruments)]
-        
         print 'Instruments for ', segment['track'], ' are : ', segment_instruments
 
         chords = template_utils.generate_random_chord_progression(song_root_note, song_chord,  random.choice(kwargs.get('chords_per_segment_range', range(3, 8))), scale_choices = ['major', 'minor', 'blues'], markov_values = markov_values, exp_var = kwargs.get('chord_exp_var', 5))
@@ -110,12 +110,33 @@ def generate_song(**kwargs):
             
             segment_channel = instrument + 1 #+ segment['track']*len(segment_instruments) + 1 
             if segment_channel == 10: segment_channel = instrument + len(segments)*len(segment_instruments) + 1 
-                            
-            segment['blocks'] += template_utils.create_chord_progression(segment, chords = chords, extra_kwargs = {'low_end' : song_root_note + str(low_end), 'high_end' : song_root_note + str(high_end), 'channel' : segment_channel , 'program_number' : segment_instruments[instrument], 'default_accent' : segment['default_accent'] + random.choice(kwargs.get('block_default_accent_range', range(-5, 5))), 'bias_same_note' : random.choice(kwargs.get('block_same_note_range', range(10, 100, 15)))})
 
-            for block in segment['blocks']:
-                pattern = template_utils.generate_pattern(segment, kwargs.get('segment_instrument_pattern_chance', 0.5), kwargs.get('pattern_note_min_len_range', 1), kwargs.get('pattern_note_len_range', 4))
-                block['pattern'] = pattern
+            pattern = None
+
+            instrument_kwargs = {
+                'low_end' : song_root_note + str(low_end), 
+                'high_end' : song_root_note + str(high_end), 
+                'channel' : segment_channel , 
+                'program_number' : segment_instruments[instrument], 
+                'default_accent' : segment['default_accent'] + random.choice(kwargs.get('block_default_accent_range', range(-5, 5))), 
+                'bias_same_note' : random.choice(kwargs.get('block_same_note_range', range(10, 100, 15))), 
+            }
+
+
+            main_instruments = kwargs.get('number_main_instruments', 1)
+            if instrument < main_instruments:
+                instrument_kwargs['default_accent'] += kwargs.get('main_default_accent_offset')
+                max_note_len = kwargs.get('main_pattern_len_range', 2)
+            else: 
+                max_note_len = kwargs.get('pattern_note_max_len_range', 4)
+
+            if random.random() > kwargs.get('segment_instrument_pattern_chance', 0.5): 
+                instrument_kwargs['pattern']= template_utils.generate_pattern(segment, kwargs.get('pattern_note_min_len_range', 1), max_note_len)
+
+
+                           
+            segment['blocks'] += template_utils.create_chord_progression(segment, chords = chords, extra_kwargs = instrument_kwargs)
+
 
         do_percussion = random.random()
         if not (do_percussion >= kwargs.get('segment_percussion_chance', 0.85) and len(segment['blocks'])/len(segment_instruments) < kwargs.get('skip_percussion_treshold', 3)): 

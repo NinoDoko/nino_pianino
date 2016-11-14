@@ -80,8 +80,6 @@ class Key:
             depth = lambda L: isinstance(L, list) and max(map(depth, L)) +1 
             markov_depth = depth(markov_values)
             self.markov_prev_notes = [self.notes.index(self.generate_note(None, 3)) for i in range(markov_depth-1)]
-            print 'Depth is : ', markov_depth
-            print self.markov_prev_notes
 
 
 
@@ -120,7 +118,8 @@ class Key:
         for note in prev_notes: 
             note_table = note_table[note]
 
-        print note_table
+        note_table = [x/sum(note_table) for x in note_table]
+        if any([x > 0.9 for x in note_table]): print note_table
         r, s = random.random(), 0
         for note in note_table:
             s+= note
