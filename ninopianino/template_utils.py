@@ -11,10 +11,12 @@ chord_progressions = [
 ]
 
 def generate_pattern(block, min_note_len = 1, max_note_len = 4):
+    print 'Minimum note is : ', min_note_len, ' and max is : ', max_note_len
     pattern_sum = block['number_of_beats_per_bar']
     pattern = []
     while sum(pattern) < pattern_sum:
         pattern.append(min(random.randint(min_note_len, max_note_len), pattern_sum - sum(pattern)))
+    print 'Pattern is : ', pattern
     return pattern
 
 def index_progression_to_notes(root_note, progression):
@@ -34,28 +36,28 @@ def generate_chord_progression(root_note):
 
 
 def generate_random_chord_progression(root_note, scale, number_of_chords, scale_choices = ['major', 'minor'], markov_values = None, exp_var = 4.0):
+    print 'Generating progrssion for ', root_note, scale
     root_key = Key(root_note = root_note, scale = scale)
     root_key_base = root_key.base_notes
 
     chord_notes = [x.note[:-1] for x in gen_notes_for_key(1, number_of_chords, root_note, scale, 1, markov_values)]
     progression = []
-    
-    for note in chord_notes: 
-        keys_candidates = [Key(root_note = note, scale = scale) for scale in scale_choices]
-        
-        keys_candidates_ctrs = [(key.scale, 0.0 + len([x for x in key.base_notes if x in root_key.base_notes]) ** exp_var) for key in keys_candidates]
-        key_candidates_probabilities = [(x[0], x[1]/sum([x[1] for x in keys_candidates_ctrs])) for x in keys_candidates_ctrs]
 
+    all_keys = [Key(note, scale) for note in root_key.base_notes for scale in scale_choices]
+
+    keys_candidates_ctrs = [(key, 0.0 + len([x for x in key.base_notes if x in root_key.base_notes]) ** exp_var) for key in all_keys]
+
+    key_candidates_probabilities = [(x[0], x[1]/sum([x[1] for x in keys_candidates_ctrs])) for x in keys_candidates_ctrs]
+    if sum(x[1] for x in key_candidates_probabilities) > 1 :
+        print 'The sum is : ', sum(x[1] for x in key_candidates_probabilities)
+
+    while len(progression) < number_of_chords: 
         r, s = random.random(), 0
         for key_prob in key_candidates_probabilities:
             s += key_prob[1]
             if s >= r: 
-                progression.append((note, key_prob[0]))
+                progression.append((key_prob[0].root_note, key_prob[0].scale))
                 break
- 
-
-#    progression = [(note,random.choice(scale_choices)) for note in chord_notes]
-
     return progression
            
         

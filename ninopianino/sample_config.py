@@ -17,10 +17,11 @@ def main():
         'chords_per_segment_range': range(2, 7), 
 
         #A list containing the program numbers of instruments that should be used. The program will choose randomly from these. 
+#        'instruments_range' : range(1, 20),
         'instruments_range' : [1, 2, 4, 7, 26, 32, 33, 45, 46, 82],
 
         #The number of instruments that will be active throughout the song. 
-        'number_of_song_instruments_range' : range(1, 3),
+        'number_of_song_instruments_range' : range(1, 4),
 
         #Number of main instruments per segment
         'number_main_instruments' : 1,
@@ -41,11 +42,13 @@ def main():
         'default_accent_range' : range(40, 55),
 
         #Volume to be added to percussions. 
-        'percussion_accent_offset' : 20,
+        'percussion_accent_offset' : 10,
+
         #Number of extra instruments per segment. 
-        'no_segment_instruments_range' : range(2, 6),
+        'no_segment_instruments_range' : range(1, 5),
 
         #Instruments range for the segment specific instruments.
+#        'segment_instruments_range' : range(1, 20),
         'segment_instruments_range' : [1, 4, 10, 12, 24, 26, 32, 33, 34, 35, 41, 42, 45, 46, 58, 74, 75, 76, 78],
 
         #Range for the number of bars per segment. Will choose randomly from this list. 
@@ -74,10 +77,15 @@ def main():
         'pattern_percussion_len_range': 3,
 
         #The dir where the songs are saved. 
-        'generate_dir' :  nino_dir + '/nino_gen_9/',
+        'generate_dir' :  nino_dir + '/nino_gen_10/',
 
         #The directory for the soundfont. This is an example, and should be supplied for specific use cases. 
-        'soundfont' :  nino_dir + '/soundfonts/FluidR3_GM.sf2',
+        'soundfont' :  nino_dir + '/soundfonts/FluidR3_GM.sf2'
+,
+#'/soundfonts/orchestra_sf/techno combo2.sf2',
+# '/soundfonts/orchestra_sf/SGM-V2.01.sf2',
+#'/soundfonts/orchestra_sf/merlin_gmv22.sf2',
+#'/soundfonts/FluidR3_GM.sf2',
 
         #The song generator will randomly repeat segments and then shuffle them. This is a range of the numbers of repeats for each segment. 
         'segment_shuffle_range' : range(1, 4),
@@ -86,7 +94,7 @@ def main():
         'max_base_default_accent' : 80,
 
         #This variable basically specifies how often the randomly generated chords will contain a chord vastly different from the generic chord. For instance, how commonly a chord progression for a song in C major to contain a chord in F minor. Higher values mean more generic chords. 
-        'chord_exp_var': 8,
+        'chord_exp_var': 4,
 
         #We may want to have segments with few instruments and no drums. This is the percentage that there are drums if the number of instruments is below the defined treshold. 
         'segment_percussion_chance': 0.85,
