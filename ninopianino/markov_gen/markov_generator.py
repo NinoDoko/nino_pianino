@@ -8,21 +8,10 @@ def rec_markov(base_markov, values):
         base_markov[values[0]] += 1.0
 
 
-
-def sum_markov(base_markov):
-    if any([type(x) == float for x in base_markov]):
-        if sum(base_markov):
-            base_markov = [x/sum(base_markov) for x in base_markov]
-            print 'Base is now : ', base_markov
-        else: return base_markov
-    else: 
-        return [sum_markov(base_markov[i]) for i in range(len(base_markov))]
-
 def markov_from_values(base_markov, values, markov_layers):
     for i in range(markov_layers, len(values)):
         prev_notes = values[i-markov_layers:i]
         rec_markov(base_markov, prev_notes)
-    base_markov = sum_markov(base_markov)
     return base_markov
 
 def main():

@@ -8,13 +8,16 @@ def main():
         'song_scale' : ['major', 'minor'],
 
         #How many segments the song has. 
-        'number_of_segments_range' : range(4, 9),
+        'number_of_segments_range' : range(4, 10),
+    
+        #The range of BPMs for each segment. Chooses randomly for each segment. 
+        'bpm_range': range(450, 750, 15), 
 
         #A range for beats per bar for each segment. Will choose randomly. 
         'beats_per_bar_range' : range(3, 13),
 
         #A range for how many chords each segment should have. Chooses randomly from this list. 
-        'chords_per_segment_range': range(2, 5), 
+        'chords_per_segment_range': range(2, 7), 
 
         #A list containing the program numbers of instruments that should be used. The program will choose randomly from these. 
 #        'instruments_range' : range(1, 20),
@@ -77,7 +80,7 @@ def main():
         'pattern_percussion_len_range': 4,
 
         #The dir where the songs are saved. 
-        'generate_dir' :  nino_dir + '/nino_gen_10/',
+        'generate_dir' :  nino_dir + '/nino_gen_11/',
 
         #The directory for the soundfont. This is an example, and should be supplied for specific use cases. 
         'soundfont' :  nino_dir + '/soundfonts/FluidR3_GM.sf2'
@@ -94,7 +97,7 @@ def main():
         'max_base_default_accent' : 80,
 
         #This variable basically specifies how often the randomly generated chords will contain a chord vastly different from the generic chord. For instance, how commonly a chord progression for a song in C major to contain a chord in F minor. Higher values mean more generic chords. 
-        'chord_exp_var': 3,
+        'chord_exp_var': 8,
 
         #We may want to have segments with few instruments and no drums. This is the percentage that there are drums if the number of instruments is below the defined treshold. 
         'segment_percussion_chance': 0.85,

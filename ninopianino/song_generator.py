@@ -65,7 +65,6 @@ def generate_song(**kwargs):
     song_root_note = random.choice(template_utils.base_notes)
     song_chord = random.choice(kwargs.get('song_scale', ['major', 'minor']))
     number_of_segments = random.choice(kwargs.get('number_of_segments_range', random.randint(3, 7)))
-    print 'Number of segments : ', number_of_segments
     bpm_range = kwargs.get('bpm_range', range(150, 540, 15))
     
     segments = [generate_segment(x, kwargs.get('beats_per_bar_range', range(3, 15)), bpm_range) for x in range(number_of_segments)]
@@ -124,7 +123,6 @@ def generate_song(**kwargs):
             min_note_len = kwargs.get('pattern_note_min_len_range', 1)
 
             if random.random() < kwargs.get('segment_instrument_pattern_chance', 0.5): 
-                print 'Note lens are : ', min_note_len, max_note_len
                 instrument_kwargs['pattern']= template_utils.generate_pattern(segment, min_note_len, max_note_len)
                          
             segment['blocks'] += template_utils.create_chord_progression(segment, chords = chords, extra_kwargs = instrument_kwargs)

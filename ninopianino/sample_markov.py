@@ -18,8 +18,8 @@ markov_values = [
 ]
  
 import json
-with open('/home/ninodoko/musicgenerator/ninopianino/results.json') as f: 
+with open('/home/ninodoko/musicgenerator/ninopianino/markov_gen/results.json') as f: 
     new_results = json.loads(f.read())
 
 
-#markov_values = new_results
+markov_values = new_results

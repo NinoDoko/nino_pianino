@@ -94,10 +94,14 @@ class Key:
             return random.choice(self.notes)
         else:
             if self.markov_values:
-                return self.generate_note_markov(note_pivot)
+                note = self.generate_note_markov(note_pivot)
+                return note
+
             pivot_index = self.notes.index(note_pivot)
             
         note_index = random.randint(max(0, pivot_index - note_radius), min(pivot_index + note_radius, len(self.notes)-1))
+        with open('/home/ninodoko/musicgenerator/ninopianino/generated_notes', 'a+') as f: 
+            f.write(', ' + str(note_index % 16))
         return self.notes[note_index]
 
 
@@ -119,12 +123,12 @@ class Key:
             note_table = note_table[note]
 
         note_table = [x/sum(note_table) for x in note_table]
-        if any([x > 0.9 for x in note_table]): print note_table
         r, s = random.random(), 0
-        for note in note_table:
+        for i in range(len(note_table)):
+            note = note_table[i]
             s+= note
             if s >= r: 
-                note_index = note_table.index(note) % len(self.notes)
+                note_index = i % len(self.notes)
                 return self.notes[note_index]
         #If we get here, something wrong happened because at some point, s has to be greater than r. 
         print 'Something went wrong at generating markov note, random int was ', r, ' and sum was ', s
