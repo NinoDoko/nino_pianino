@@ -16,7 +16,7 @@ def main():
     setup(
         name = 'ninopianino',
         packages = ['ninopianino'],
-        version = '0.1.1', 
+        version = '0.1.2', 
         description = 'Programmable music generator. ', 
         author = 'Nikola Dokoski', 
         author_email = 'ninodokoskiot@hotmail.com', 

@@ -1,7 +1,8 @@
-import random, json
+import random, json, os
 
 
-nino_dir = '/home/ninodoko/musicgenerator'
+nino_dir = '/'.join(os.path.dirname(os.path.realpath(__file__)).split('/')[:-1])
+
 def main():
     kwargs = {
         #What the general scale for the shond should be - chosen randomly from this list. 
@@ -108,7 +109,8 @@ def main():
     }
 
     kwargs = json.dumps(kwargs)
-    with open('/home/ninodoko/musicgenerator/sample_config.json', 'w') as f: 
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    with open(dir_path + '/sample_config.json', 'w') as f: 
         f.write(kwargs)
 
 main()
