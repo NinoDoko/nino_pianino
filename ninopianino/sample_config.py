@@ -12,7 +12,7 @@ def main():
         'number_of_segments_range' : range(4, 10),
     
         #The range of BPMs for each segment. Chooses randomly for each segment. 
-        'bpm_range': range(450, 750, 15), 
+        'bpm_range': range(300, 550, 15), 
 
         #A range for beats per bar for each segment. Will choose randomly. 
         'beats_per_bar_range' : range(3, 13),

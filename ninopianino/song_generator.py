@@ -9,9 +9,11 @@ import copy
 from sample_markov import markov_values
 
 def get_bounds(val, par_a, par_b, par_c, val_mul_a, val_mul_b):
-    lower_bound = int(par_a * par_b/ (par_b - val*val_mul_a))
-    higher_bound = int(par_c * par_b / val * val_mul_b)
-    return (lower_bound, higher_bound)
+    print 'Getting bounds for ', val
+    bounds = [int(par_a * par_b/ (par_b - val*val_mul_a)), int(par_c * par_b / val * val_mul_b)]
+    bounds.sort()
+    print 'Bounds are : ', bounds
+    return bounds 
     
 
 def organize_blocks(blocks):

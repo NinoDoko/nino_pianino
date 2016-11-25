@@ -11,12 +11,10 @@ chord_progressions = [
 ]
 
 def generate_pattern(block, min_note_len = 1, max_note_len = 4):
-    print 'Minimum note is : ', min_note_len, ' and max is : ', max_note_len
     pattern_sum = block['number_of_beats_per_bar']
     pattern = []
     while sum(pattern) < pattern_sum:
         pattern.append(min(random.randint(min_note_len, max_note_len), pattern_sum - sum(pattern)))
-    print 'Pattern is : ', pattern
     return pattern
 
 def index_progression_to_notes(root_note, progression):
@@ -36,7 +34,6 @@ def generate_chord_progression(root_note):
 
 
 def generate_random_chord_progression(root_note, scale, number_of_chords, scale_choices = ['major', 'minor'], markov_values = None, exp_var = 4.0):
-    print 'Generating progrssion for ', root_note, scale
     root_key = Key(root_note = root_note, scale = scale)
     root_key_base = root_key.base_notes
 

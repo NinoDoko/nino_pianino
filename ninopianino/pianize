@@ -1,8 +1,12 @@
 #!/usr/bin/python
 
 import argparse, json
-from ninopianino import song_generator
-from ninopianino.generator import write_mid, generate
+#from ninopianino import song_generator
+#from ninopianino.generator import write_mid, generate
+
+import song_generator
+from generator import write_mid, generate
+
 
 def main():
     parser = argparse.ArgumentParser(description = 'Parser for ninopianino')
