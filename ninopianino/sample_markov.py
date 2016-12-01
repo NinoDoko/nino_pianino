@@ -1,3 +1,5 @@
+import os
+
 markov_values = [
     [0.1, 0.05, 0.15, 0.1, 0.15, 0.1, 0.1, 0.05, 0.015, 0.05, 0.015, 0.05, 0.03, 0.02, 0.02],
     [0.1, 0.05, 0.05, 0.1, 0.2, 0.15, 0.05, 0.05, 0.02, 0.05, 0.02, 0.03, 0.04, 0.04, 0.05],
@@ -16,10 +18,14 @@ markov_values = [
     [0.01, 0.02, 0.02, 0.01, 0.015, 0.01, 0.075, 0.16, 0.17, 0.085, 0.15, 0.075, 0.05, 0.05, 0.1],
     [0.01, 0.01, 0.01, 0.02, 0.075, 0.075, 0.05, 0.1, 0.1, 0.13, 0.13, 0.13, 0.075, 0.075, 0.01],
 ]
- 
+
+results_dir = '/'.join(os.path.dirname(os.path.realpath(__file__)).split('/')[:-1])
+
 import json
-with open('/home/ninodoko/musicgenerator/ninopianino/markov_gen/results.json') as f: 
-    new_results = json.loads(f.read())
+try: 
+    with open(results_dir + '/results.json') as f: 
+        new_results = json.loads(f.read())
 
-
-markov_values = new_results
+    markov_values = new_results
+except: 
+    pass

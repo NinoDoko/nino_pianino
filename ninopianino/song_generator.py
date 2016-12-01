@@ -52,7 +52,7 @@ def shuffle_play_at(segments, segment_number_range = range(1, 3)):
 def create_segment_percussion(segment, kwargs):
     percussion = template_utils.create_percussion(segment, no_hits = 2, no_cymbals = random.randint(1, 3))
     percussion['blocks'][0]['pattern'] = [1] * (segment['number_of_beats_per_bar']%2) + [4]*int(segment['number_of_beats_per_bar']/4)
-    percussion['blocks'][0]['default_accent'] = 100
+    percussion['blocks'][0]['default_accent'] = 120
     percussion['markov_values'] = False
 
     for block in percussion['blocks'][1:]: 
@@ -71,8 +71,10 @@ def generate_song(**kwargs):
     
     segments = [generate_segment(x, kwargs.get('beats_per_bar_range', range(3, 15)), bpm_range) for x in range(number_of_segments)]
 
-    number_of_instruments = random.choice(kwargs.get('number_of_song_instruments_range', range(1, random.randint(1, 3))))
-    song_instruments = [random.choice(kwargs.get('instruments_range', range(0, 90))) for i in range(1, number_of_instruments)]
+    number_of_instruments_range = kwargs.get('number_of_song_instruments_range', range(1, random.randint(1, 3)))
+    number_of_instruments = random.choice(number_of_instruments_range)
+    print ('Range of instuments : ', number_of_instruments_range)
+    song_instruments = [random.choice(kwargs.get('instruments_range', range(0, 90))) for i in range(number_of_instruments)]
     print 'Song instruments are : ', song_instruments
         
     for i in range(len(segments)):
@@ -94,6 +96,7 @@ def generate_song(**kwargs):
             segment['default_accent'] = random.choice(kwargs.get('default_accent_range', range(65, 85)))
 
         number_segment_instruments_range = kwargs.get('no_segment_instruments_range', range(1, 5 - len(song_instruments)))
+        print ('Range for instruments for segment ', segment['track'], ' is : ', number_segment_instruments_range)
         number_segment_instruments = random.choice(number_segment_instruments_range)
         
         segment_instruments_range = kwargs.get('segment_instruments_range', range(0, 90))
@@ -157,6 +160,9 @@ def generate_song(**kwargs):
     song_path = generator.write_mid(mid, song_name, use_soundfont = soundfont )
     if kwargs.get('get_mid'): 
         return song_path + '.mid'
+    generator.to_wav(song_path + '.mid')
+    if kwargs.get('get_wav'):
+        return song_path + '.wav'
     success = subprocess.check_output(['lame', song_path + '.wav'])
     return song_path + '.mp3'
 

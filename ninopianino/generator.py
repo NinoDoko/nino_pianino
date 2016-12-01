@@ -106,10 +106,12 @@ def write_mid(mid, output, use_soundfont = ''):
     
     mid.writeFile(binfile)
     binfile.close()
-    if use_soundfont: 
-        command = ['fluidsynth', '-F', output + '.wav', use_soundfont, output + '.mid']
-        subprocess.call(command)
     return output
+
+def to_wav(song_path):
+    command = ['fluidsynth', '-F', output + '.wav', use_soundfont, output + '.mid']
+    subprocess.call(command)
+
 
 if __name__ == '__main__' : 
     main()

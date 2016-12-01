@@ -1,11 +1,17 @@
 #!/usr/bin/python
 
 import argparse, json
-#from ninopianino import song_generator
-#from ninopianino.generator import write_mid, generate
-
-import song_generator
-from generator import write_mid, generate
+try: 
+    import song_generator
+    from generator import write_mid, generate
+except: 
+    try: 
+        from ninopianino import song_generator
+        from ninopianino.generator import write_mid, generate
+    except: 
+        import traceback
+        print 'Importing packages failed. '
+        traceback.print_exc()
 
 
 def main():
