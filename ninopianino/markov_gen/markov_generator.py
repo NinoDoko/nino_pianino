@@ -1,17 +1,17 @@
 import sys, json
 
 
-def rec_markov(base_markov, values):
+def rec_markov(base_markov, values, weight):
     if len(values) > 1: 
-        return rec_markov(base_markov[values[0]], values[1:])
+        return rec_markov(base_markov[values[0]], values[1:], weight)
     else: 
-        base_markov[values[0]] += 1.0
+        base_markov[values[0]] += weight
 
 
-def markov_from_values(base_markov, values, markov_layers):
+def markov_from_values(base_markov, values, markov_layers, weight):
     for i in range(markov_layers, len(values)):
         prev_notes = values[i-markov_layers:i]
-        rec_markov(base_markov, prev_notes)
+        rec_markov(base_markov, prev_notes, weight)
     return base_markov
 
 def main():

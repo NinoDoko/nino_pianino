@@ -1,12 +1,19 @@
 from midiutil.MidiFile import MIDIFile
 import music_models, argparse, random, note_timing, copy, json, subprocess
 
+#If this value is supplied, the Key class will write down all notes it generates in the file specified. 
+dir_write_note = ''
+
+def set_dir_write_note(new_dir):
+    global dir_write_note
+    dir_write_note = new_dir
+
 def gen_notes_for_key(track, number_notes, root_note, scale, channel, duration = 1, bias_same_note = 0, low_end = 'A0', high_end = 'G#8', base_notes = [], notes_bias = {}, markov_values = None):
     k = music_models.Key(root_note, scale, base_notes, notes_bias, low_end, high_end, markov_values)
     notes = []
     prev_note = k.generate_note(None, 3)
     while number_notes>0:
-        prev_note = k.generate_note(prev_note, 7, bias_same_note)
+        prev_note = k.generate_note(prev_note, 7, bias_same_note, dir_write_note = dir_write_note)
         notes.append(music_models.Note(channel = channel, track = track, note = prev_note, duration = duration, volume = 100)) 
         number_notes -= 1 
     return notes
@@ -90,26 +97,27 @@ def main():
     
 def generate(blocks, no_tracks = 100):
     mid = MIDIFile(no_tracks)
-    
-    entire_track = handle_block(blocks, mid)
 
-    note_fix_warning = True
+    entire_track = handle_block(blocks, mid)
+    print ('Entire track is : ', entire_track)
+    return generate_from_track(mid, entire_track, no_tracks)    
+
+def generate_from_track(mid, entire_track, no_tracks = 100):
     for bar in entire_track: 
         for note in bar.notes:
             mid.addNote(*note.get_values())                
 
     return mid
-    
-
-def write_mid(mid, output, use_soundfont = ''):
+   
+def write_mid(mid, output):
     binfile = open(output + '.mid', 'w+b')
     
     mid.writeFile(binfile)
     binfile.close()
     return output
 
-def to_wav(song_path):
-    command = ['fluidsynth', '-F', output + '.wav', use_soundfont, output + '.mid']
+def to_wav(song_path, soundfont):
+    command = ['fluidsynth', '-F', song_path + '.wav', soundfont, song_path + '.mid']
     subprocess.call(command)
 
 

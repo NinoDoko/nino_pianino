@@ -9,16 +9,16 @@ def main():
         'song_scale' : ['major', 'minor'],
 
         #How many segments the song has. 
-        'number_of_segments_range' : range(3, 7),
+        'number_of_segments_range' : range(2, 5),
     
         #The range of BPMs for each segment. Chooses randomly for each segment. 
-        'bpm_range': range(200, 550, 15), 
+        'bpm_range': range(200, 350, 15), 
 
         #A range for beats per bar for each segment. Will choose randomly. 
-        'beats_per_bar_range' : range(3, 21),
+        'beats_per_bar_range' : [3, 4],
 
         #A range for how many chords each segment should have. Chooses randomly from this list. 
-        'chords_per_segment_range': range(2, 7), 
+        'chords_per_segment_range': range(1, 5), 
 
         #A list containing the program numbers of instruments that should be used. The program will choose randomly from these. 
 #        'instruments_range' : range(1, 20),
@@ -46,7 +46,7 @@ def main():
         'default_accent_range' : range(70, 85),
 
         #Volume to be added to percussions. 
-        'percussion_accent_offset' : 10,
+        'percussion_accent_offset' : 0,
 
         #Number of extra instruments per segment. 
         'no_segment_instruments_range' : range(1, 4),
@@ -56,7 +56,7 @@ def main():
         'segment_instruments_range' : [1, 4, 10, 12, 24, 26, 32, 33, 34, 35, 41, 42, 45, 46, 58, 74, 75, 76, 78],
 
         #Range for the number of bars per segment. Will choose randomly from this list. 
-        'number_segment_bars_range' : range(2, 6),
+        'number_segment_bars_range' : range(6, 12),
 
         #Accent range offset for instrument specific blocks. 
         'block_default_accent_range' :  range(-5, 5),
@@ -71,13 +71,13 @@ def main():
         'pattern_note_len_range' :  5,
         
         #And the lower range for how long the note can last. Should not be less than 1. 
-        'pattern_note_min_len_range' : 1,
+        'pattern_note_min_len_range' : 2,
 
         #List for possible values for the bias_same_note for percussions per segment. 
         'percussion_bias_same_note' : range(30, 90, 5),
 
         #The same min and max values, but only for percussions. 
-        'pattern_percussion_min_len_range':  1,
+        'pattern_percussion_min_len_range':  2,
         'pattern_percussion_len_range': 4,
 
         #The dir where the songs are saved. 
@@ -95,13 +95,13 @@ def main():
 #'/soundfonts/FluidR3_GM.sf2',
 
         #The song generator will randomly repeat segments and then shuffle them. This is a range of the numbers of repeats for each segment. 
-        'segment_shuffle_range' : range(1, 4),
+        'segment_shuffle_range' : range(3, 6),
 
         #The script uses a specific function to generate a base default accent, but we may want to place an upper limit. 
         'max_base_default_accent' : 80,
 
         #This variable basically specifies how often the randomly generated chords will contain a chord vastly different from the generic chord. For instance, how commonly a chord progression for a song in C major to contain a chord in F minor. Higher values mean more generic chords. 
-        'chord_exp_var': 4,
+        'chord_exp_var': 12,
 
         #We may want to have segments with few instruments and no drums. This is the percentage that there are drums if the number of instruments is below the defined treshold. 
         'segment_percussion_chance': 0.85,

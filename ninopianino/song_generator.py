@@ -2,11 +2,14 @@ import uuid
 import subprocess
 import random
 import template_utils   
-import generator
 import haikunator
 import sys
 import copy
-from sample_markov import markov_values
+import json
+import sample_markov
+from midiutil.MidiFile import MIDIFile
+
+import generator
 
 def get_bounds(val, par_a, par_b, par_c, val_mul_a, val_mul_b):
     print 'Getting bounds for ', val
@@ -69,6 +72,12 @@ def generate_song(**kwargs):
     number_of_segments = random.choice(kwargs.get('number_of_segments_range', random.randint(3, 7)))
     bpm_range = kwargs.get('bpm_range', range(150, 540, 15))
     
+    if kwargs.get('markov_values'):
+        with open(kwargs['markov_values']) as f: 
+            markov_values = json.loads(f.read())
+    else: 
+        markov_values = sample_markov.markov_values
+
     segments = [generate_segment(x, kwargs.get('beats_per_bar_range', range(3, 15)), bpm_range) for x in range(number_of_segments)]
 
     number_of_instruments_range = kwargs.get('number_of_song_instruments_range', range(1, random.randint(1, 3)))
@@ -143,26 +152,30 @@ def generate_song(**kwargs):
     for segment in segments: 
         print 'Segment ', segment['track'], ' has ', segment['play_at'], ' has  ', segment['number_of_beats_per_bar'], ' beats per bar and ', segment['number_of_bars'], ' bars and lasts ', segment['number_of_beats_per_bar'] * segment['number_of_bars']
 
-#    segments = shuffle_segments(segments, kwargs.get('segment_shuffle_range', range(1, 3)))
     base_block = template_utils.create_base_block()
 
     base_block['blocks'] = segments
-#    new_values = [[random.random() + prob for prob in note_probs] for note_probs in markov_values]
-#    new_values = [[i / sum(x) for i in x] for x in markov_values]
     base_block['markov_values'] = markov_values
-    
-    mid = generator.generate(base_block)
-    song_name = kwargs.get('generate_dir', 'generated/') + haikunator.Haikunator.haikunate()
 
+
+    gen_name = haikunator.Haikunator.haikunate()
+    song_name = kwargs.get('generate_dir', 'generated/') + gen_name 
+
+
+    mid = MIDIFile(100)
+    
+    entire_track = generator.handle_block(base_block, mid)
+    mid = generator.generate_from_track(mid, entire_track, 100)    
+
+#    mid = generator.generate(base_block)
 
     soundfont = kwargs.get('soundfont', 'soundfonts/FluidR3_GM.sf2')
     print 'Using soundfont : ', soundfont
-    song_path = generator.write_mid(mid, song_name, use_soundfont = soundfont )
+    song_path = generator.write_mid(mid, song_name)
     if kwargs.get('get_mid'): 
         return song_path + '.mid'
-    generator.to_wav(song_path + '.mid')
-    if kwargs.get('get_wav'):
-        return song_path + '.wav'
+
+    generator.to_wav(song_path, soundfont)
     success = subprocess.check_output(['lame', song_path + '.wav'])
     return song_path + '.mp3'
 

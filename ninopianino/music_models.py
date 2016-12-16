@@ -86,7 +86,7 @@ class Key:
     #This function generates a note regarding the note_pivot it is given. 
     #A pivot is required so the notes chosen aren't just completely arbitrary, and so with a given pivot and radius, the generator will pick notes relatively close to each other. 
     #The bias_same_note is an int argument <100 that is a probability for the generator to choose the same note as the pivot. If using the note_timing module, notes with the same value are squished together, which is basically how you get notes of varying length. 
-    def generate_note(self, note_pivot = None, note_radius = 3, bias_same_note = 0):
+    def generate_note(self, note_pivot = None, note_radius = 3, bias_same_note = 0, dir_write_note = ''):
         if random.randint(0, 100) < bias_same_note and note_pivot: 
             return note_pivot
             
@@ -95,14 +95,18 @@ class Key:
         else:
             if self.markov_values:
                 note = self.generate_note_markov(note_pivot)
-                return note
-
-            pivot_index = self.notes.index(note_pivot)
-            
-        note_index = random.randint(max(0, pivot_index - note_radius), min(pivot_index + note_radius, len(self.notes)-1))
-        with open('/home/ninodoko/musicgenerator/ninopianino/generated_notes', 'a+') as f: 
-            f.write(', ' + str(note_index % 16))
-        return self.notes[note_index]
+                note_index = None
+            else: 
+                pivot_index = self.notes.index(note_pivot)
+                note_index = random.randint(max(0, pivot_index - note_radius), min(pivot_index + note_radius, len(self.notes)-1))
+                note = self.notes[note_index]
+           
+        if dir_write_note: 
+            with open(dir_write_note, 'a+') as f: 
+                if not note_index: 
+                    note_index = self.notes.index(note)
+                f.write(', ' + str(note_index % 16))
+        return note
 
 
     #This function generates a note but by using markov chain principles instead. Basically, there is (or should be) a file containing values that help choose the note based on the previous one. The values are contained in a list like so : 
