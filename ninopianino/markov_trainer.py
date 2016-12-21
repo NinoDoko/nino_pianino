@@ -38,7 +38,7 @@ def gen_kwargs():
         'main_instrument_bias_same_note' : [0],
 
         #The maximum pattern note length for the main instrument
-        'main_pattern_len_range' : 1, 
+        'pattern_note_max_len_range' : 1,
 
         #Each segment will have a different accent from the previous, determined by a random value from this list. 
         'accent_offset' : range(-5, 5),
@@ -53,16 +53,16 @@ def gen_kwargs():
         'no_segment_instruments_range' : [0],
 
         #Range for the number of bars per segment. Will choose randomly from this list. 
-        'number_segment_bars_range' : [16],
+        'number_segment_bars_range' : [32],
 
         #Accent range offset for instrument specific blocks. 
         'block_default_accent_range' :  range(-5, 5),
 
         #Chance for each instrument to follow a pattern for the duration of the segment. 
-        'segment_instrument_pattern_chance' : 0.9,
+        'segment_instrument_pattern_chance' : 1.0,
 
         #Upper range for how long a pattern note can last. Should not be longer than the maximum amount of beats per bar for the instrument. 
-        'pattern_note_len_range' :  3,
+        'pattern_note_len_range' :  1,
         
         #And the lower range for how long the note can last. Should not be less than 1. 
         'pattern_note_min_len_range' : 1,

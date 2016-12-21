@@ -117,8 +117,8 @@ def generate_song(**kwargs):
         
         for instrument in range(len(segment_instruments)):
             #TODO args for low_end and high_end
-            low_end = random.randint(1, 3)
-            high_end = low_end + random.randint(1, low_end if low_end<3 else 2)
+            low_end = random.randint(1, 2)
+            high_end = low_end + random.randint(1, low_end)
             
             segment_channel = instrument + 1 #+ segment['track']*len(segment_instruments) + 1 
             if segment_channel == 10: segment_channel = instrument + len(segments)*len(segment_instruments) + 1 

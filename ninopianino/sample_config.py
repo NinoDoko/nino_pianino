@@ -9,10 +9,10 @@ def main():
         'song_scale' : ['major', 'minor'],
 
         #How many segments the song has. 
-        'number_of_segments_range' : range(3, 7),
+        'number_of_segments_range' : range(2, 5),
     
         #The range of BPMs for each segment. Chooses randomly for each segment. 
-        'bpm_range': range(200, 550, 15), 
+        'bpm_range': range(200, 650, 15), 
 
         #A range for beats per bar for each segment. Will choose randomly. 
         'beats_per_bar_range' : range(3, 21),
@@ -22,7 +22,11 @@ def main():
 
         #A list containing the program numbers of instruments that should be used. The program will choose randomly from these. 
 #        'instruments_range' : range(1, 20),
-        'instruments_range' : [1, 2, 4, 7, 26, 32, 33, 45, 46, 82],
+        'instruments_range' : [1, 2, 6, 7, 15, 16, 19, 20, 21, 22, 23, 24, 27, 29, 37, 38, 39, 40, 41, 42, 52, 57, 60, 67, 80, 81, 87], #for merlin; 19 is organ, 80 + 81 are techno
+        'segment_instruments_range' : [8, 9, 10, 13, 16, 17, 18, 22, 24, 25, 26, 28, 33, 34, 35, 36, 39, 41,43, 45, 46, 49, 53, 54, 56, 58, 60, 62, 63, 64, 65, 68, 69, 70, 71, 72, 73, 74, 76, 77, 78, 79, 82, 83, 85, ], # for merlin
+
+#        'instruments_range' : [1, 2, 4, 7, 26, 32, 33, 45, 46, 82],
+#        'instruments_range' : [1, 2, 7, 12, 15, 17, 18, 21, 22, 23, 24, 28, 34, 35, 36, 37, 38, 40, 41, 42, 45, 46, 48, 56, 59, 64, 66, 69, 71], 
 
         #The number of instruments that will be active throughout the song. 
         'number_of_song_instruments_range' : range(2, 5),
@@ -35,9 +39,6 @@ def main():
 
         #How much louder the main instrument should be.
         'main_default_accent_offset' : 20,
-
-        #The maximum pattern note length for the main instrument
-        'main_pattern_len_range' : 4, 
 
         #Each segment will have a different accent from the previous, determined by a random value from this list. 
         'accent_offset' : range(-5, 5),
@@ -53,10 +54,11 @@ def main():
 
         #Instruments range for the segment specific instruments.
 #        'segment_instruments_range' : range(1, 20),
-        'segment_instruments_range' : [1, 4, 10, 12, 24, 26, 32, 33, 34, 35, 41, 42, 45, 46, 58, 74, 75, 76, 78],
+#        'segment_instruments_range' : [1, 4, 10, 12, 24, 26, 32, 33, 34, 35, 41, 42, 45, 46, 58, 74, 75, 76, 78],
+#        'segment_instruments_range' : [1, 4, 5, 8, 10, 11, 12, 16, 17, 20, 24, 26, 28, 32, 33, 34, 35, 39, 42, 44, 45, 46, 48, 49, 53, 54, 58, 68, 69, 70, 72, 73, 74, 75, 76, 78, 82, 83],
 
         #Range for the number of bars per segment. Will choose randomly from this list. 
-        'number_segment_bars_range' : range(2, 6),
+        'number_segment_bars_range' : range(3, 8),
 
         #Accent range offset for instrument specific blocks. 
         'block_default_accent_range' :  range(-5, 5),
@@ -68,7 +70,7 @@ def main():
         'segment_instrument_pattern_chance' : 0.9,
 
         #Upper range for how long a pattern note can last. Should not be longer than the maximum amount of beats per bar for the instrument. 
-        'pattern_note_len_range' :  5,
+        'pattern_note_len_range' :  4,
         
         #And the lower range for how long the note can last. Should not be less than 1. 
         'pattern_note_min_len_range' : 1,
@@ -81,14 +83,16 @@ def main():
         'pattern_percussion_len_range': 4,
 
         #The dir where the songs are saved. 
-        'generate_dir' :  nino_dir + '/nino_gen_13/',
+        'generate_dir' :  nino_dir + '/nino_gen_14/',
 
         #The file from which we get markov values. 
-        'markov_values' : nino_dir + '/ninopianino/results.json', 
+        'markov_values' : nino_dir + '/trainer/results.json', 
+
+#        'markov_values' : nino_dir + '/ninopianino/results.json', 
 
         #The directory for the soundfont. This is an example, and should be supplied for specific use cases. 
-        'soundfont' :  nino_dir + '/soundfonts/FluidR3_GM.sf2'
-,
+        'soundfont' :  nino_dir + '/soundfonts/orchestra_sf/merlin_gmv22.sf2',
+
 #'/soundfonts/orchestra_sf/techno combo2.sf2',
 # '/soundfonts/orchestra_sf/SGM-V2.01.sf2',
 #'/soundfonts/orchestra_sf/merlin_gmv22.sf2',
