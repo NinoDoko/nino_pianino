@@ -12,10 +12,8 @@ from midiutil.MidiFile import MIDIFile
 import generator
 
 def get_bounds(val, par_a, par_b, par_c, val_mul_a, val_mul_b):
-    print 'Getting bounds for ', val
     bounds = [int(par_a * par_b/ (par_b - val*val_mul_a)), int(par_c * par_b / val * val_mul_b)]
     bounds.sort()
-    print 'Bounds are : ', bounds
     return bounds 
     
 
@@ -54,17 +52,85 @@ def shuffle_play_at(segments, segment_number_range = range(1, 3)):
 
 def create_segment_percussion(segment, kwargs):
     percussion = template_utils.create_percussion(segment, no_hits = 2, no_cymbals = random.randint(1, 3))
-    percussion['blocks'][0]['pattern'] = [1] * (segment['number_of_beats_per_bar']%2) + [4]*int(segment['number_of_beats_per_bar']/4)
-    percussion['blocks'][0]['default_accent'] = 120
+#    percussion['blocks'][0]['pattern'] = [1] * (segment['number_of_beats_per_bar']%2) + [4]*int(segment['number_of_beats_per_bar']/4)
+#    percussion['blocks'][0]['default_accent'] = 80
+#    print 'Default pattern is : ', percussion['blocks'][0]['pattern']
     percussion['markov_values'] = False
 
-    for block in percussion['blocks'][1:]: 
-        pattern = template_utils.generate_pattern(segment, kwargs.get('pattern_percussion_min_len_range', 1) , kwargs.get('pattern_percussion_len_range', 4))
+    for block in percussion['blocks']: 
+        pattern = template_utils.generate_pattern(segment, kwargs.get('pattern_percussion_min_len_range', 1) , kwargs.get('pattern_percussion_max_len_range', 4))
         block['pattern'] = pattern
+        print 'Percussion pattern for ', block['name'], ' is : ', pattern, ' and it plays at : ', block['play_at']
         block['bias_same_note'] = random.choice(kwargs.get('percussion_bias_same_note', range(30, 90, 5)))
         block['default_accent'] = segment['default_accent'] + random.randint(-5, 5) + kwargs.get('percussion_accent_offset', 20)
     return percussion
 
+
+
+def create_segment(segments, i, kwargs, song_instruments, song_chord, markov_values):
+    print "I am creating a segment!"
+    song_root_note = random.choice(template_utils.base_notes)
+    segment = segments[i]
+
+    prev = {}
+    if i: 
+        prev = segments[i-1]
+        segment['default_accent'] = prev['default_accent'] + random.choice(kwargs.get('accent_offset', range(-5, 5)))
+        
+        lower_bpm_bound, higher_bpm_bound = kwargs.get('bpm_bounds', get_bounds(prev['bpm'], -5, 540, 25, 0.99, 0.7))
+        
+        segment['bpm'] = prev['bpm'] + random.randint(lower_bpm_bound, higher_bpm_bound)
+        lower_accent_bound, higher_accent_bound = kwargs.get('default_accent_bounds', get_bounds(prev['default_accent'], -3, 100, 4, 0.9, 0.9))
+        
+        segment['default_accent'] = min(prev['default_accent'] + random.randint(lower_accent_bound, higher_accent_bound), kwargs.get('max_base_default_accent', 100))
+    else: 
+        segment['default_accent'] = random.choice(kwargs.get('default_accent_range', range(65, 85)))
+
+    number_segment_instruments_range = kwargs.get('no_segment_instruments_range', range(1, 5 - len(song_instruments)))
+    print ('Range for instruments for segment ', segment['track'], ' is : ', number_segment_instruments_range)
+    number_segment_instruments = random.choice(number_segment_instruments_range)
+    
+    segment_instruments_range = kwargs.get('segment_instruments_range', range(0, 90))
+    segment_instruments = song_instruments + [random.choice(segment_instruments_range) for i in range(number_segment_instruments)]
+    print 'Instruments for ', segment['track'], ' are : ', segment_instruments
+
+    chords = template_utils.generate_random_chord_progression(song_root_note, song_chord,  random.choice(kwargs.get('chords_per_segment_range', range(3, 8))), scale_choices = ['major', 'minor', 'blues'], markov_values = markov_values, exp_var = kwargs.get('chord_exp_var', 5))
+    segment['number_of_bars'] = len(chords) * random.choice(kwargs.get('number_segment_bars_range', range(1, 3)))
+    
+    for instrument in range(len(segment_instruments)):
+        #TODO args for low_end and high_end
+        low_end = random.randint(1, 2)
+        high_end = low_end + random.randint(1, 3 - low_end)
+        
+        print 'I got ends : ', low_end, high_end
+        segment_channel = instrument + 1 #+ segment['track']*len(segment_instruments) + 1 
+        if segment_channel == 10: segment_channel = instrument + len(segments)*len(segment_instruments) + 1 
+
+        pattern = None
+
+        instrument_kwargs = {
+            'low_end' : song_root_note + str(low_end), 
+            'high_end' : song_root_note + str(high_end), 
+            'channel' : segment_channel , 
+            'program_number' : segment_instruments[instrument], 
+            'default_accent' : segment['default_accent'] + random.choice(kwargs.get('block_default_accent_range', range(-5, 5))), 
+            'bias_same_note' : random.choice(kwargs.get('block_same_note_range', range(10, 100, 15))), 
+        }
+        max_note_len = kwargs.get('pattern_note_max_len_range', 4)
+        min_note_len = kwargs.get('pattern_note_min_len_range', 1)
+
+        if random.random() < kwargs.get('segment_instrument_pattern_chance', 0.5): 
+            instrument_kwargs['pattern']= template_utils.generate_pattern(segment, min_note_len, max_note_len)
+                     
+        segment['blocks'] += template_utils.create_chord_progression(segment, chords = chords, extra_kwargs = instrument_kwargs)
+
+
+    do_percussion = random.random()
+    if not (do_percussion >= kwargs.get('segment_percussion_chance', 0.85) and len(segment['blocks'])/len(segment_instruments) < kwargs.get('skip_percussion_treshold', 3)): 
+        percussion = create_segment_percussion(segment, kwargs)           
+        segment['blocks'].append(percussion)
+
+    return segment
 
 def generate_song(**kwargs):
     song_root_note = random.choice(template_utils.base_notes)
@@ -87,66 +153,10 @@ def generate_song(**kwargs):
     print 'Song instruments are : ', song_instruments
         
     for i in range(len(segments)):
-        song_root_note = random.choice(template_utils.base_notes)
+        print ('Segments before: ', [x['track'] for x in segments])
 
-        segment = segments[i]
-        prev = {}
-        if i: 
-            prev = segments[i-1]
-            segment['default_accent'] = prev['default_accent'] + random.choice(kwargs.get('accent_offset', range(-5, 5)))
-            
-            lower_bpm_bound, higher_bpm_bound = kwargs.get('bpm_bounds', get_bounds(prev['bpm'], -5, 540, 25, 0.99, 0.7))
-            
-            segment['bpm'] = prev['bpm'] + random.randint(lower_bpm_bound, higher_bpm_bound)
-            lower_accent_bound, higher_accent_bound = kwargs.get('default_accent_bounds', get_bounds(prev['default_accent'], -3, 100, 4, 0.9, 0.9))
-            
-            segment['default_accent'] = min(prev['default_accent'] + random.randint(lower_accent_bound, higher_accent_bound), kwargs.get('max_base_default_accent', 100))
-        else: 
-            segment['default_accent'] = random.choice(kwargs.get('default_accent_range', range(65, 85)))
+        create_segment(segments, i, kwargs, song_instruments, song_chord, markov_values)
 
-        number_segment_instruments_range = kwargs.get('no_segment_instruments_range', range(1, 5 - len(song_instruments)))
-        print ('Range for instruments for segment ', segment['track'], ' is : ', number_segment_instruments_range)
-        number_segment_instruments = random.choice(number_segment_instruments_range)
-        
-        segment_instruments_range = kwargs.get('segment_instruments_range', range(0, 90))
-        segment_instruments = song_instruments + [random.choice(segment_instruments_range) for i in range(number_segment_instruments)]
-        print 'Instruments for ', segment['track'], ' are : ', segment_instruments
-
-        chords = template_utils.generate_random_chord_progression(song_root_note, song_chord,  random.choice(kwargs.get('chords_per_segment_range', range(3, 8))), scale_choices = ['major', 'minor', 'blues'], markov_values = markov_values, exp_var = kwargs.get('chord_exp_var', 5))
-        segment['number_of_bars'] = len(chords) * random.choice(kwargs.get('number_segment_bars_range', range(1, 3)))
-        
-        for instrument in range(len(segment_instruments)):
-            #TODO args for low_end and high_end
-            low_end = random.randint(1, 2)
-            high_end = low_end + random.randint(1, low_end)
-            
-            segment_channel = instrument + 1 #+ segment['track']*len(segment_instruments) + 1 
-            if segment_channel == 10: segment_channel = instrument + len(segments)*len(segment_instruments) + 1 
-
-            pattern = None
-
-            instrument_kwargs = {
-                'low_end' : song_root_note + str(low_end), 
-                'high_end' : song_root_note + str(high_end), 
-                'channel' : segment_channel , 
-                'program_number' : segment_instruments[instrument], 
-                'default_accent' : segment['default_accent'] + random.choice(kwargs.get('block_default_accent_range', range(-5, 5))), 
-                'bias_same_note' : random.choice(kwargs.get('block_same_note_range', range(10, 100, 15))), 
-            }
-            max_note_len = kwargs.get('pattern_note_max_len_range', 4)
-            min_note_len = kwargs.get('pattern_note_min_len_range', 1)
-
-            if random.random() < kwargs.get('segment_instrument_pattern_chance', 0.5): 
-                instrument_kwargs['pattern']= template_utils.generate_pattern(segment, min_note_len, max_note_len)
-                         
-            segment['blocks'] += template_utils.create_chord_progression(segment, chords = chords, extra_kwargs = instrument_kwargs)
-
-
-        do_percussion = random.random()
-        if not (do_percussion >= kwargs.get('segment_percussion_chance', 0.85) and len(segment['blocks'])/len(segment_instruments) < kwargs.get('skip_percussion_treshold', 3)): 
-            percussion = create_segment_percussion(segment, kwargs)           
-            segment['blocks'].append(percussion)
- 
     segments = shuffle_play_at(segments, kwargs.get('segment_shuffle_range', range(1, 3)))   
     print 'Generated segments are : '
     for segment in segments: 

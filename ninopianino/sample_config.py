@@ -22,14 +22,14 @@ def main():
 
         #A list containing the program numbers of instruments that should be used. The program will choose randomly from these. 
 #        'instruments_range' : range(1, 20),
-        'instruments_range' : [1, 2, 6, 7, 15, 16, 19, 20, 21, 22, 23, 24, 27, 29, 37, 38, 39, 40, 41, 42, 52, 57, 60, 67, 80, 81, 87], #for merlin; 19 is organ, 80 + 81 are techno
-        'segment_instruments_range' : [8, 9, 10, 13, 16, 17, 18, 22, 24, 25, 26, 28, 33, 34, 35, 36, 39, 41,43, 45, 46, 49, 53, 54, 56, 58, 60, 62, 63, 64, 65, 68, 69, 70, 71, 72, 73, 74, 76, 77, 78, 79, 82, 83, 85, ], # for merlin
+#        'instruments_range' : [1, 2, 6, 7, 15, 16, 19, 20, 21, 22, 23, 24, 27, 29, 37, 38, 39, 40, 41, 42, 52, 57, 60, 67, 80, 81, 87], #for merlin; 19 is organ, 80 + 81 are techno
+#        'segment_instruments_range' : [8, 9, 10, 13, 16, 17, 18, 22, 24, 25, 26, 28, 33, 34, 35, 36, 39, 41,43, 45, 46, 49, 53, 54, 56, 58, 60, 62, 63, 64, 65, 68, 69, 70, 71, 72, 73, 74, 76, 77, 78, 79, 82, 83, 85, ], # for merlin
 
 #        'instruments_range' : [1, 2, 4, 7, 26, 32, 33, 45, 46, 82],
 #        'instruments_range' : [1, 2, 7, 12, 15, 17, 18, 21, 22, 23, 24, 28, 34, 35, 36, 37, 38, 40, 41, 42, 45, 46, 48, 56, 59, 64, 66, 69, 71], 
 
         #The number of instruments that will be active throughout the song. 
-        'number_of_song_instruments_range' : range(2, 5),
+        'number_of_song_instruments_range' : range(1, 3),
 
         #Number of main instruments per segment
         'number_main_instruments' : 1,
@@ -91,7 +91,7 @@ def main():
 #        'markov_values' : nino_dir + '/ninopianino/results.json', 
 
         #The directory for the soundfont. This is an example, and should be supplied for specific use cases. 
-        'soundfont' :  nino_dir + '/soundfonts/orchestra_sf/merlin_gmv22.sf2',
+        'soundfont' :  nino_dir + '/soundfonts/orchestra_sf/SGM-V2.01.sf2',
 
 #'/soundfonts/orchestra_sf/techno combo2.sf2',
 # '/soundfonts/orchestra_sf/SGM-V2.01.sf2',
