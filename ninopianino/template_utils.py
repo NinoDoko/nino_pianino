@@ -73,8 +73,8 @@ def create_percussion(block, no_hits = 1, no_cymbals = 1):
             "root_note": "C",
             "scale": "major",
             "low_end": "B0",
-            "high_end": "G1"
-            "default_accent": 80, ,
+            "high_end": "G1",
+            "default_accent": 80, 
         })
         no_hits -= 1
 

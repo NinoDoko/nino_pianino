@@ -25,7 +25,6 @@ import json
 try: 
     with open(results_dir + '/results.json') as f: 
         new_results = json.loads(f.read())
-
     markov_values = new_results
 except: 
     pass

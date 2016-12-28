@@ -5,6 +5,10 @@ try:
     import song_generator
     import generator
 except: 
+    import traceback
+    print 'Importing packages from local folder failed. '
+    traceback.print_exc()
+
     try: 
         from ninopianino import song_generator
         import ninopianino.generator

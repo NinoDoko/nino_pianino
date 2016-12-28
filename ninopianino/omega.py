@@ -9,10 +9,13 @@ def main():
         'song_scale' : ['major', 'minor'],
 
         #How many segments the song has. 
-        'number_of_segments_range' : range(2, 5),
+        'number_of_segments_range' : range(3, 6),
     
         #The range of BPMs for each segment. Chooses randomly for each segment. 
-        'bpm_range': range(90, 240, 15), 
+        'bpm_range': range(150, 500, 15), 
+
+        #Probability that the bpm for a segment will be different from another one. 
+        'bpm_change_prob': 0.4,
 
         #A range for beats per bar for each segment. Will choose randomly. 
         'beats_per_bar_range' : [3, 4, 4, 4, 4, 5],
@@ -21,10 +24,10 @@ def main():
         'chords_per_segment_range': range(1, 4), 
 
         #A list containing the program numbers of instruments that should be used. The program will choose randomly from these. 
-        'instruments_range' : [1, 2, 3, 7, 16, 18, 23, 25, 28, 36, 38, 43, 46, 56, 60, 70, 71, 75],
+        'instruments_range' : [1, 2, 3, 7, 16, 18, 23, 25, 28, 36, 38, 43, 46, 56, 60, 70, 71, 75] ,
 
         #Instruments range for the segment specific instruments.
-        'segment_instruments_range' : [1, 4, 8, 10, 11, 12, 19, 24, 26, 28, 32, 33, 34, 35, 36, 37, 39, 40, 41, 42, 45, 46, 52, 57, 58, 60, 66, 68, 69, 70, 72, 73, 74, 75, 76, 78, 79],
+        'segment_instruments_range' :[1, 4, 8, 10, 11, 12, 19, 24, 26, 28, 32, 33, 34, 35, 36, 37, 39, 40, 41, 42, 45, 46, 52, 57, 58, 60, 66, 68, 69, 70, 72, 73, 74, 75, 76, 78, 79],
 
         #The number of instruments that will be active throughout the song. 
         'number_of_song_instruments_range' : range(1, 3),
@@ -63,7 +66,7 @@ def main():
         'block_same_note_range' :  range(10, 40, 5),
 
         #Chance for each instrument to follow a pattern for the duration of the segment. 
-        'segment_instrument_pattern_chance' : 0.9,
+        'segment_instrument_pattern_chance' : 0.7,
 
         #Upper range for how long a pattern note can last. Should not be longer than the maximum amount of beats per bar for the instrument. 
         'pattern_note_len_range' :  2,
@@ -79,10 +82,11 @@ def main():
         'pattern_percussion_max_len_range': 4,
 
         #The dir where the songs are saved. 
-        'generate_dir' :  nino_dir + '/nino_gen_14/',
+        'generate_dir' :  nino_dir + '/normie_gen/',
 
         #The file from which we get markov values. 
-        'markov_values' : nino_dir + '/trainer/results.json', 
+        'markov_values' : nino_dir + '/trainer/results2.json',
+#        'markov_values' : nino_dir + '/trainer/old_res.json', pretty good
 
         #The directory for the soundfont. This is an example, and should be supplied for specific use cases. 
         'soundfont' :  nino_dir + '/soundfonts/OmegaGMGS2.sf2',
@@ -94,7 +98,7 @@ def main():
         'max_base_default_accent' : 80,
 
         #This variable basically specifies how often the randomly generated chords will contain a chord vastly different from the generic chord. For instance, how commonly a chord progression for a song in C major to contain a chord in F minor. Higher values mean more generic chords. 
-        'chord_exp_var': 9,
+        'chord_exp_var': 8,
 
         #We may want to have segments with few instruments and no drums. This is the percentage that there are drums if the number of instruments is below the defined treshold. 
         'segment_percussion_chance': 0.85,
