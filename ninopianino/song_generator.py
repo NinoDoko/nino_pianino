@@ -35,18 +35,24 @@ def shuffle_segments(segments, segment_number_range = range(1, 3)):
 
 def shuffle_play_at(segments, segment_number_range = range(1, 3)):
     segments_with_repeats = [[segment, random.choice(segment_number_range)] for segment in segments]
+    prev_segment = None
     current_play_at = 0
     while segments_with_repeats:
         segment = random.choice(segments_with_repeats)
+        while segment == prev_segment and len(segments_with_repeats) != 1: 
+            print ('Choosing segment from : ', segments_with_repeats)
+            segment = random.choice(segments_with_repeats)
 
+        prev_segment = segment
         i = segments_with_repeats.index(segment)
         segments_with_repeats[i][1] -= 1
         if segments_with_repeats[i][1] == 0: del segments_with_repeats[i]
         segment = segment[0]
 
         i = segments.index(segment)
-        segments[i]['play_at'].append(current_play_at)
-        current_play_at = current_play_at + segment['number_of_bars'] * segment['number_of_beats_per_bar']
+        segment_play_at = [current_play_at + j * segments[i]['number_of_bars'] * segments[i]['number_of_beats_per_bar'] for j in range(segments[i]['number_repeats'])]
+        segments[i]['play_at'] += segment_play_at
+        current_play_at = segments[i]['play_at'][-1] + segments[i]['number_of_bars'] * segments[i]['number_of_beats_per_bar']
     return segments
     
 
@@ -89,6 +95,8 @@ def create_segment(segments, i, kwargs, song_instruments, song_chord, markov_val
     number_segment_instruments_range = kwargs.get('no_segment_instruments_range', range(1, 5 - len(song_instruments)))
     number_segment_instruments = random.choice(number_segment_instruments_range)
     
+    segment['number_repeats'] = random.choice(kwargs.get('number_repeats_range', [1]))
+
     segment_instruments_range = kwargs.get('segment_instruments_range', range(0, 90))
     segment_instruments = song_instruments + [random.choice(segment_instruments_range) for i in range(number_segment_instruments)]
     print 'Instruments for ', segment['track'], ' are : ', segment_instruments
@@ -98,8 +106,8 @@ def create_segment(segments, i, kwargs, song_instruments, song_chord, markov_val
     
     for instrument in range(len(segment_instruments)):
         #TODO args for low_end and high_end
-        low_end = random.randint(1, 2)
-        high_end = low_end + random.randint(1, low_end)
+        low_end = random.randint(0, 2)
+        high_end = min(low_end + random.randint(1, 2), 3)
         
         segment_channel = instrument + 1 #+ segment['track']*len(segment_instruments) + 1 
         if segment_channel == 10: segment_channel = instrument + len(segments)*len(segment_instruments) + 1 
@@ -156,7 +164,7 @@ def generate_song(**kwargs):
     segments = shuffle_play_at(segments, kwargs.get('segment_shuffle_range', range(1, 3)))   
     print 'Generated segments are : '
     for segment in segments: 
-        print 'Segment ', segment['track'], ' has ', segment['play_at'], ' has  ', segment['number_of_beats_per_bar'], ' beats per bar and ', segment['number_of_bars'], ' bars and lasts ', segment['number_of_beats_per_bar'] * segment['number_of_bars'], ' playing at ', segment['bpm'], ' BPM. '
+        print 'Segment ', segment['track'], ' has ', segment['play_at'], ' has  ', segment['number_of_beats_per_bar'], ' beats per bar and ', segment['number_of_bars'], ' bars and lasts ', segment['number_of_beats_per_bar'] * segment['number_of_bars'], ' playing at ', segment['bpm'], ' BPM and I repeat ', segment['number_repeats'], ' times. '
 
     base_block = template_utils.create_base_block()
 

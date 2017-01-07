@@ -99,7 +99,6 @@ def generate(blocks, no_tracks = 100):
     mid = MIDIFile(no_tracks)
 
     entire_track = handle_block(blocks, mid)
-    print ('Entire track is : ', entire_track)
     return generate_from_track(mid, entire_track, no_tracks)    
 
 def generate_from_track(mid, entire_track, no_tracks = 100):
