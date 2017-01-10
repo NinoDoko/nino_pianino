@@ -40,7 +40,6 @@ def shuffle_play_at(segments, segment_number_range = range(1, 3)):
     while segments_with_repeats:
         segment = random.choice(segments_with_repeats)
         while segment == prev_segment and len(segments_with_repeats) != 1: 
-            print ('Choosing segment from : ', segments_with_repeats)
             segment = random.choice(segments_with_repeats)
 
         prev_segment = segment
@@ -107,8 +106,9 @@ def create_segment(segments, i, kwargs, song_instruments, song_chord, markov_val
     for instrument in range(len(segment_instruments)):
         #TODO args for low_end and high_end
         low_end = random.randint(0, 2)
-        high_end = min(low_end + random.randint(1, 2), 3)
+        high_end = min(low_end + random.randint(1, 2), 4)
         
+        print ('Low end is ', low_end, ' and high_end is ', high_end)
         segment_channel = instrument + 1 #+ segment['track']*len(segment_instruments) + 1 
         if segment_channel == 10: segment_channel = instrument + len(segments)*len(segment_instruments) + 1 
 
