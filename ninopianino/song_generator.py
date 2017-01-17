@@ -78,7 +78,7 @@ def create_segment(segments, i, kwargs, song_instruments, song_chord, markov_val
     prev = {}
     if i: 
         prev = segments[i-1]
-        if random.random < kwargs.get('bpm_change_prob', 0.2): 
+        if random.random() < kwargs.get('bpm_change_prob', 0.2): 
             segment['bpm'] = random.choice(kwargs.get('bpm_range', range(150, 540, 15)))
         else:
             segment['bpm'] = prev['bpm']
@@ -108,7 +108,6 @@ def create_segment(segments, i, kwargs, song_instruments, song_chord, markov_val
         low_end = random.randint(0, 2)
         high_end = min(low_end + random.randint(1, 2), 4)
         
-        print ('Low end is ', low_end, ' and high_end is ', high_end)
         segment_channel = instrument + 1 #+ segment['track']*len(segment_instruments) + 1 
         if segment_channel == 10: segment_channel = instrument + len(segments)*len(segment_instruments) + 1 
 

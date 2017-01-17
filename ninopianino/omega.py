@@ -9,7 +9,7 @@ def main():
         'song_scale' : ['major', 'minor'],
 
         #How many segments the song has. 
-        'number_of_segments_range' : range(2, 5),
+        'number_of_segments_range' : range(3, 6),
     
         #The range of BPMs for each segment. Chooses randomly for each segment. 
         'bpm_range': range(150, 500, 15), 
@@ -27,10 +27,10 @@ def main():
         'number_repeats_range' : range(2, 5),
 
         #A list containing the program numbers of instruments that should be used. The program will choose randomly from these. 
-        'instruments_range' :  [1, 2, 3, 5, 24, 25, 36, 37, 45, 46], #Conservative
+#        'instruments_range' :  [1, 2, 5, 24, 25, 36, 37, 45, 46], #Conservative
 
         #Instruments range for the segment specific instruments.
-        'segment_instruments_range' : [5, 6, 7, 8, 10, 12, 24, 26, 28, 32, 33, 34, 36, 39, 40, 45, 48, 70, 71, 72, 76] , #also conservative
+#        'segment_instruments_range' : [5, 7, 8, 10, 12, 24, 26, 28, 32, 33, 34, 36, 39, 40, 45, 48, 70, 71, 72, 76] , #also conservative
 
         #The number of instruments that will be active throughout the song. 
         'number_of_song_instruments_range' : range(1, 3),
@@ -60,7 +60,7 @@ def main():
         'no_segment_instruments_range' : range(1, 3),
 
         #Range for the number of bars per segment. Will choose randomly from this list. 
-        'number_segment_bars_range' : range(4, 9),
+        'number_segment_bars_range' : range(2, 5),
 
         #Accent range offset for instrument specific blocks. 
         'block_default_accent_range' :  range(-5, 5),
@@ -95,7 +95,7 @@ def main():
         'soundfont' :  nino_dir + '/soundfonts/OmegaGMGS2.sf2',
 
         #The song generator will randomly repeat segments and then shuffle them. This is a range of the numbers of repeats for each segment. 
-        'segment_shuffle_range' : range(1, 4),
+        'segment_shuffle_range' : range(1, 5),
 
         #The script uses a specific function to generate a base default accent, but we may want to place an upper limit. 
         'max_base_default_accent' : 80,
