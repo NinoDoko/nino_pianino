@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>generator.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>generator.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">midiutil.MidiFile</span> <span class="kn">import</span> <span class="n">MIDIFile</span>
+<span class="kn">import</span> <span class="nn">music_models</span><span class="o">,</span> <span class="nn">argparse</span><span class="o">,</span> <span class="nn">random</span><span class="o">,</span> <span class="nn">note_timing</span><span class="o">,</span> <span class="nn">copy</span><span class="o">,</span> <span class="nn">json</span><span class="o">,</span> <span class="nn">subprocess</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <p>If this value is supplied, the Key class will write down all notes it generates in the file specified. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">dir_write_note</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">set_dir_write_note</span><span class="p">(</span><span class="n">new_dir</span><span class="p">):</span>
+    <span class="k">global</span> <span class="n">dir_write_note</span>
+    <span class="n">dir_write_note</span> <span class="o">=</span> <span class="n">new_dir</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">gen_notes_for_key</span><span class="p">(</span><span class="n">track</span><span class="p">,</span> <span class="n">number_notes</span><span class="p">,</span> <span class="n">root_note</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">channel</span><span class="p">,</span> <span class="n">duration</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">bias_same_note</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">low_end</span> <span class="o">=</span> <span class="s1">&#39;A0&#39;</span><span class="p">,</span> <span class="n">high_end</span> <span class="o">=</span> <span class="s1">&#39;G#8&#39;</span><span class="p">,</span> <span class="n">base_notes</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">notes_bias</span> <span class="o">=</span> <span class="p">{},</span> <span class="n">markov_values</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="n">music_models</span><span class="o">.</span><span class="n">Key</span><span class="p">(</span><span class="n">root_note</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">base_notes</span><span class="p">,</span> <span class="n">notes_bias</span><span class="p">,</span> <span class="n">low_end</span><span class="p">,</span> <span class="n">high_end</span><span class="p">,</span> <span class="n">markov_values</span><span class="p">)</span>
+    <span class="n">notes</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">prev_note</span> <span class="o">=</span> <span class="n">k</span><span class="o">.</span><span class="n">generate_note</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="k">while</span> <span class="n">number_notes</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+        <span class="n">prev_note</span> <span class="o">=</span> <span class="n">k</span><span class="o">.</span><span class="n">generate_note</span><span class="p">(</span><span class="n">prev_note</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="n">bias_same_note</span><span class="p">,</span> <span class="n">dir_write_note</span> <span class="o">=</span> <span class="n">dir_write_note</span><span class="p">)</span>
+        <span class="n">notes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">music_models</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="n">channel</span> <span class="o">=</span> <span class="n">channel</span><span class="p">,</span> <span class="n">track</span> <span class="o">=</span> <span class="n">track</span><span class="p">,</span> <span class="n">note</span> <span class="o">=</span> <span class="n">prev_note</span><span class="p">,</span> <span class="n">duration</span> <span class="o">=</span> <span class="n">duration</span><span class="p">,</span> <span class="n">volume</span> <span class="o">=</span> <span class="mi">100</span><span class="p">))</span> 
+        <span class="n">number_notes</span> <span class="o">-=</span> <span class="mi">1</span> 
+    <span class="k">return</span> <span class="n">notes</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">calculate_number_of_notes</span><span class="p">(</span><span class="n">block</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;number_of_notes&#39;</span><span class="p">):</span> <span class="k">return</span> <span class="n">block</span><span class="p">[</span><span class="s1">&#39;number_of_notes&#39;</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;number_of_bars&#39;</span><span class="p">):</span> <span class="k">return</span> <span class="n">block</span><span class="p">[</span><span class="s1">&#39;number_of_bars&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">block</span><span class="p">[</span><span class="s1">&#39;number_of_beats_per_bar&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;There was an error calculating the number of notes in block &#39;</span><span class="p">,</span> <span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">))</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">generate_generic_notes</span><span class="p">(</span><span class="n">b</span><span class="p">):</span>
+    <span class="n">number_of_notes</span> <span class="o">=</span> <span class="n">calculate_number_of_notes</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+    <span class="n">gen_notes_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;track&#39;</span> <span class="p">:</span> <span class="n">b</span><span class="p">[</span><span class="s1">&#39;track&#39;</span><span class="p">],</span> <span class="s1">&#39;channel&#39;</span> <span class="p">:</span> <span class="n">b</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;channel&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="s1">&#39;number_notes&#39;</span> <span class="p">:</span> <span class="n">number_of_notes</span><span class="p">,</span> <span class="s1">&#39;root_note&#39;</span> <span class="p">:</span> <span class="n">b</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;root_note&#39;</span><span class="p">,</span> <span class="s1">&#39;A&#39;</span><span class="p">),</span> <span class="s1">&#39;scale&#39;</span> <span class="p">:</span> <span class="n">b</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;scale&#39;</span><span class="p">,</span> <span class="s1">&#39;minor&#39;</span><span class="p">),</span> <span class="s1">&#39;bias_same_note&#39;</span> <span class="p">:</span> <span class="n">b</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;bias_same_note&#39;</span><span class="p">),</span> <span class="s1">&#39;high_end&#39;</span> <span class="p">:</span> <span class="n">b</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;high_end&#39;</span><span class="p">,</span> <span class="s1">&#39;G#7&#39;</span><span class="p">),</span> <span class="s1">&#39;low_end&#39;</span> <span class="p">:</span> <span class="n">b</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;low_end&#39;</span><span class="p">,</span> <span class="s1">&#39;C1&#39;</span><span class="p">),</span> <span class="s1">&#39;base_notes&#39;</span><span class="p">:</span> <span class="n">b</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;base_notes&#39;</span><span class="p">),</span> <span class="s1">&#39;notes_bias&#39;</span><span class="p">:</span> <span class="n">b</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;notes_bias&#39;</span><span class="p">,</span> <span class="p">{}),</span> <span class="s1">&#39;markov_values&#39;</span> <span class="p">:</span> <span class="n">b</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;markov_values&#39;</span><span class="p">)}</span>
+    <span class="n">generic_notes</span> <span class="o">=</span> <span class="n">gen_notes_for_key</span><span class="p">(</span><span class="o">**</span><span class="n">gen_notes_kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">generic_notes</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">group_generic_notes</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">generic_notes</span><span class="p">,</span> <span class="n">starting_point</span><span class="p">):</span>
+    <span class="n">ungrouped_notes</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">generic_notes</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">b</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;accents&#39;</span><span class="p">)</span> <span class="p">:</span> 
+        <span class="n">accents</span> <span class="o">=</span> <span class="p">{</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">):</span><span class="n">b</span><span class="p">[</span><span class="s1">&#39;accents&#39;</span><span class="p">][</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">b</span><span class="p">[</span><span class="s1">&#39;accents&#39;</span><span class="p">]}</span>
+    <span class="k">else</span> <span class="p">:</span> <span class="n">accents</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">grouped_notes_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;notes&#39;</span> <span class="p">:</span> <span class="n">ungrouped_notes</span><span class="p">,</span> <span class="s1">&#39;no_beats&#39;</span> <span class="p">:</span> <span class="n">b</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;number_of_beats_per_bar&#39;</span><span class="p">),</span> <span class="s1">&#39;time_signature&#39;</span> <span class="p">:</span> <span class="n">b</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;time_signature&#39;</span><span class="p">),</span> <span class="s1">&#39;bias_separate_notes&#39;</span> <span class="p">:</span> <span class="n">b</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;bias_separate_notes&#39;</span><span class="p">),</span> <span class="s1">&#39;accents&#39;</span> <span class="p">:</span> <span class="n">accents</span><span class="p">,</span> <span class="s1">&#39;start_at&#39;</span> <span class="p">:</span> <span class="n">starting_point</span><span class="p">,</span> <span class="s1">&#39;pattern&#39;</span> <span class="p">:</span> <span class="n">b</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;pattern&#39;</span><span class="p">,</span> <span class="p">[]),</span> <span class="s1">&#39;default_accent&#39;</span><span class="p">:</span><span class="n">b</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;default_accent&#39;</span><span class="p">,</span> <span class="mi">50</span><span class="p">)}</span>
+    <span class="n">grouped_notes</span> <span class="o">=</span> <span class="n">note_timing</span><span class="o">.</span><span class="n">group_notes_for_time_signature</span><span class="p">(</span><span class="o">**</span><span class="n">grouped_notes_kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">grouped_notes</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">handle_block</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">mid</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">b</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;repeat&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">b</span><span class="p">[</span><span class="s1">&#39;play_at&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="n">b</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;number_of_beats_per_bar&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">b</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;number_of_bars&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="p">[</span><span class="s1">&#39;repeat&#39;</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+    <span class="k">if</span> <span class="n">b</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;block_type&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;complex&#39;</span> <span class="p">:</span>
+        <span class="n">mid</span><span class="o">.</span><span class="n">addTempo</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="s1">&#39;track&#39;</span><span class="p">],</span> <span class="n">b</span><span class="p">[</span><span class="s1">&#39;play_at&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">b</span><span class="p">[</span><span class="s1">&#39;bpm&#39;</span><span class="p">])</span> 
+        <span class="n">complex_track</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">b</span><span class="p">[</span><span class="s1">&#39;blocks&#39;</span><span class="p">]:</span> 
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">block</span><span class="p">:</span> <span class="k">continue</span> 
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">b</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">block</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;blocks&#39;</span><span class="p">,</span> <span class="s1">&#39;block_type&#39;</span><span class="p">,</span> <span class="s1">&#39;play_at&#39;</span><span class="p">,</span> <span class="s1">&#39;repeat&#39;</span><span class="p">,</span> <span class="s1">&#39;number_of_blocks&#39;</span><span class="p">]:</span>
+                    <span class="n">block</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">b</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="n">complex_track</span> <span class="o">+=</span> <span class="n">handle_block</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="n">mid</span><span class="p">)</span>
+
+        <span class="n">entire_track</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="k">for</span> <span class="n">starting_point</span> <span class="ow">in</span> <span class="n">b</span><span class="p">[</span><span class="s1">&#39;play_at&#39;</span><span class="p">]:</span>
+            <span class="n">temp_track</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">complex_track</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">bar</span> <span class="ow">in</span> <span class="n">temp_track</span><span class="p">:</span> 
+                <span class="k">for</span> <span class="n">note</span> <span class="ow">in</span> <span class="n">bar</span><span class="o">.</span><span class="n">notes</span><span class="p">:</span>
+                    <span class="n">note</span><span class="o">.</span><span class="n">time</span> <span class="o">+=</span> <span class="n">starting_point</span>
+            <span class="n">entire_track</span> <span class="o">+=</span> <span class="n">temp_track</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">entire_track</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">generic_notes</span> <span class="o">=</span> <span class="n">generate_generic_notes</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>       
+            
+        <span class="k">for</span> <span class="n">starting_point</span> <span class="ow">in</span> <span class="n">b</span><span class="p">[</span><span class="s1">&#39;play_at&#39;</span><span class="p">]:</span>
+                <span class="n">mid</span><span class="o">.</span><span class="n">addProgramChange</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="s1">&#39;track&#39;</span><span class="p">],</span> <span class="n">b</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;channel&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">starting_point</span><span class="p">,</span> <span class="n">b</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;program_number&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span> 
+                <span class="n">grouped_notes</span> <span class="o">=</span> <span class="n">group_generic_notes</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">generic_notes</span><span class="p">,</span> <span class="n">starting_point</span><span class="p">)</span>
+                <span class="n">entire_track</span> <span class="o">+=</span> <span class="n">grouped_notes</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      <pre><code>   print 'notes for ', b['name'], ':', [[t.time for t in x.notes] for x in entire_track], '\n\n'
+</code></pre>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">return</span> <span class="n">entire_track</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Basic arguments&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--use_soundfont&#39;</span><span class="p">,</span> <span class="n">help</span> <span class="o">=</span> <span class="s1">&#39;Soundfont to use for creating a wav file. If not specified, will just create a mid file&#39;</span><span class="p">,</span> <span class="n">default</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--output&#39;</span><span class="p">,</span> <span class="n">help</span> <span class="o">=</span> <span class="s1">&#39;Path for output midi file. &#39;</span><span class="p">,</span> <span class="n">default</span> <span class="o">=</span> <span class="s1">&#39;output&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--input&#39;</span><span class="p">,</span> <span class="n">help</span> <span class="o">=</span> <span class="s1">&#39;Path for input JSON file. &#39;</span><span class="p">,</span> <span class="n">default</span> <span class="o">=</span> <span class="s1">&#39;input.JSON&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--no_tracks&#39;</span><span class="p">,</span> <span class="n">help</span> <span class="o">=</span> <span class="s1">&#39;Number of tracks. Default is 100. &#39;</span><span class="p">,</span> <span class="n">default</span> <span class="o">=</span> <span class="mi">100</span><span class="p">)</span>
+
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">output</span>
+    <span class="n">blocks</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+    
+    <span class="n">no_tracks</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">no_tracks</span>
+    
+    <span class="n">mid</span> <span class="o">=</span> <span class="n">generate</span><span class="p">(</span><span class="n">blocks</span><span class="p">,</span> <span class="n">no_tracks</span><span class="p">)</span>
+    <span class="n">write_mid</span><span class="p">(</span><span class="n">mid</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">use_soundfont</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-10'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-10'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">generate</span><span class="p">(</span><span class="n">blocks</span><span class="p">,</span> <span class="n">no_tracks</span> <span class="o">=</span> <span class="mi">100</span><span class="p">):</span>
+    <span class="n">mid</span> <span class="o">=</span> <span class="n">MIDIFile</span><span class="p">(</span><span class="n">no_tracks</span><span class="p">)</span>
+
+    <span class="n">entire_track</span> <span class="o">=</span> <span class="n">handle_block</span><span class="p">(</span><span class="n">blocks</span><span class="p">,</span> <span class="n">mid</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">generate_from_track</span><span class="p">(</span><span class="n">mid</span><span class="p">,</span> <span class="n">entire_track</span><span class="p">,</span> <span class="n">no_tracks</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-11'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-11'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">generate_from_track</span><span class="p">(</span><span class="n">mid</span><span class="p">,</span> <span class="n">entire_track</span><span class="p">,</span> <span class="n">no_tracks</span> <span class="o">=</span> <span class="mi">100</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">bar</span> <span class="ow">in</span> <span class="n">entire_track</span><span class="p">:</span> 
+        <span class="k">for</span> <span class="n">note</span> <span class="ow">in</span> <span class="n">bar</span><span class="o">.</span><span class="n">notes</span><span class="p">:</span>
+            <span class="n">mid</span><span class="o">.</span><span class="n">addNote</span><span class="p">(</span><span class="o">*</span><span class="n">note</span><span class="o">.</span><span class="n">get_values</span><span class="p">())</span>                
+
+    <span class="k">return</span> <span class="n">mid</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-12'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-12'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">write_mid</span><span class="p">(</span><span class="n">mid</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
+    <span class="n">binfile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">output</span> <span class="o">+</span> <span class="s1">&#39;.mid&#39;</span><span class="p">,</span> <span class="s1">&#39;w+b&#39;</span><span class="p">)</span>
+    
+    <span class="n">mid</span><span class="o">.</span><span class="n">writeFile</span><span class="p">(</span><span class="n">binfile</span><span class="p">)</span>
+    <span class="n">binfile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">output</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-13'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-13'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">to_wav</span><span class="p">(</span><span class="n">song_path</span><span class="p">,</span> <span class="n">soundfont</span><span class="p">):</span>
+    <span class="n">command</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;fluidsynth&#39;</span><span class="p">,</span> <span class="s1">&#39;-F&#39;</span><span class="p">,</span> <span class="n">song_path</span> <span class="o">+</span> <span class="s1">&#39;.wav&#39;</span><span class="p">,</span> <span class="n">soundfont</span><span class="p">,</span> <span class="n">song_path</span> <span class="o">+</span> <span class="s1">&#39;.mid&#39;</span><span class="p">]</span>
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span> <span class="p">:</span> 
+    <span class="n">main</span><span class="p">()</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

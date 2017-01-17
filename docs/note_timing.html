@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>note_timing.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>note_timing.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">music_models</span><span class="o">,</span> <span class="nn">random</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <p>Time_signature should be a string formatted as x/y, for instance 3/8. 
+The function makes a list of bars (where a bar is a list of notes) and in those bars are tuples of notes + length of note in beats. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">group_notes_for_time_signature</span><span class="p">(</span><span class="n">notes</span><span class="p">,</span> <span class="n">no_beats</span><span class="p">,</span> <span class="n">bias_separate_notes</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">accents</span> <span class="o">=</span> <span class="p">{},</span> <span class="n">start_at</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">pattern</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">time_signature</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">default_accent</span> <span class="o">=</span> <span class="mi">50</span><span class="p">):</span>
+    <span class="n">notes</span> <span class="o">=</span> <span class="p">[</span><span class="n">notes</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">no_beats</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">notes</span><span class="p">),</span> <span class="n">no_beats</span><span class="p">)]</span>
+    
+    <span class="n">result</span> <span class="o">=</span> <span class="p">[[]]</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">start_at</span>
+    <span class="k">for</span> <span class="n">bar</span> <span class="ow">in</span> <span class="n">notes</span><span class="p">:</span>
+        <span class="n">new_bar</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">pattern</span><span class="p">:</span> 
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span> 
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">bar</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">duration</span> <span class="o">=</span> <span class="n">pattern</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="n">bar</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="n">t</span>
+                    <span class="n">t</span> <span class="o">+=</span> <span class="n">pattern</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="n">new_bar</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span> 
+                    <span class="k">continue</span>
+        <span class="k">else</span><span class="p">:</span> 
+            <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">no_beats</span> <span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">no_beats</span> <span class="p">:</span> <span class="k">break</span>
+                <span class="n">length</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="n">j</span> <span class="o">=</span> <span class="n">i</span>
+                <span class="k">while</span> <span class="n">bar</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">pitch</span> <span class="o">==</span> <span class="n">bar</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">pitch</span> <span class="p">:</span>
+                    <span class="n">length</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">bias_separate_notes</span> <span class="ow">or</span> <span class="n">j</span> <span class="o">==</span> <span class="n">no_beats</span> <span class="p">:</span> 
+                        <span class="k">break</span>
+                <span class="n">bar</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">duration</span> <span class="o">=</span> <span class="n">length</span>
+                <span class="k">if</span> <span class="n">length</span> <span class="o">&gt;</span> <span class="mi">20</span><span class="p">:</span>
+                    <span class="k">print</span> <span class="s1">&#39;Length exceeded!&#39;</span>
+                    <span class="k">print</span> <span class="n">length</span>
+                    <span class="nb">exit</span><span class="p">()</span>
+                <span class="n">bar</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="n">t</span>
+                <span class="n">t</span> <span class="o">+=</span> <span class="n">length</span>
+                <span class="n">new_bar</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bar</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="n">i</span> <span class="o">=</span> <span class="n">j</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">music_models</span><span class="o">.</span><span class="n">Bar</span><span class="p">(</span><span class="n">new_bar</span><span class="p">,</span> <span class="n">accents</span><span class="p">,</span> <span class="n">default_accent</span><span class="p">))</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">result</span> <span class="k">if</span> <span class="n">x</span><span class="p">]</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

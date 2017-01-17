@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>block_to_generator.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>block_to_generator.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">json</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">class</span> <span class="nc">Block</span><span class="p">:</span>
+    <span class="n">defaults</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;name&#39;</span> <span class="p">:</span> <span class="s1">&#39;unnamed&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;track&#39;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span> 
+        <span class="s1">&#39;channel&#39;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span> 
+        <span class="s1">&#39;program_number&#39;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span> 
+        <span class="s1">&#39;play_at&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> 
+        <span class="s1">&#39;bpm&#39;</span> <span class="p">:</span> <span class="mi">60</span><span class="p">,</span> 
+        <span class="s1">&#39;number_of_bars&#39;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span> 
+        <span class="s1">&#39;number_of_beats_per_bar&#39;</span> <span class="p">:</span> <span class="mi">4</span><span class="p">,</span> 
+        <span class="s1">&#39;bias_same_note&#39;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span> 
+        <span class="s1">&#39;bias_separate_notes&#39;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span> 
+        <span class="s1">&#39;pattern&#39;</span> <span class="p">:</span> <span class="p">[],</span> 
+        <span class="s1">&#39;repeat&#39;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span> 
+        <span class="s1">&#39;root_note&#39;</span> <span class="p">:</span> <span class="s1">&#39;C&#39;</span><span class="p">,</span> 
+        <span class="s1">&#39;scale&#39;</span> <span class="p">:</span> <span class="s1">&#39;major&#39;</span><span class="p">,</span> 
+        <span class="s1">&#39;base_notes&#39;</span> <span class="p">:</span> <span class="p">[],</span> 
+        <span class="s1">&#39;low_end&#39;</span> <span class="p">:</span> <span class="s1">&#39;C1&#39;</span><span class="p">,</span> 
+        <span class="s1">&#39;high_end&#39;</span> <span class="p">:</span> <span class="s1">&#39;C6&#39;</span><span class="p">,</span> 
+        <span class="s1">&#39;default_accent&#39;</span> <span class="p">:</span> <span class="mi">50</span><span class="p">,</span> 
+        <span class="s1">&#39;accents&#39;</span> <span class="p">:</span> <span class="p">{},</span> 
+        <span class="s1">&#39;notes_bias&#39;</span> <span class="p">:</span> <span class="p">{},</span> 
+        <span class="s1">&#39;block_type&#39;</span> <span class="p">:</span> <span class="bp">None</span><span class="p">,</span> 
+        <span class="s1">&#39;blocks&#39;</span> <span class="p">:</span> <span class="p">[]</span>
+    <span class="p">}</span>
+    
+    
+    <span class="n">hard_defaults</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;play_at&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> 
+        <span class="s1">&#39;block_type&#39;</span> <span class="p">:</span> <span class="bp">None</span><span class="p">,</span> 
+    <span class="p">}</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        
+        <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;use_defaults&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">):</span> 
+            <span class="k">for</span> <span class="n">default</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">defaults</span><span class="p">:</span> 
+                <span class="k">if</span> <span class="n">default</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span> 
+                    <span class="n">kwargs</span><span class="p">[</span><span class="n">default</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">defaults</span><span class="p">[</span><span class="n">default</span><span class="p">]</span>
+                    
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">hard_defaults</span><span class="p">:</span> 
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span> 
+                <span class="n">kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hard_defaults</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span> 
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+
+        <span class="k">print</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">generate_dict_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">block_type</span><span class="p">:</span> 
+            <span class="n">temp_block</span> <span class="o">=</span> <span class="bp">self</span>
+            <span class="n">blocks_temp</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">blocks</span><span class="p">:</span>
+                <span class="n">blocks_temp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">generate_dict_tree</span><span class="p">())</span>
+            <span class="n">temp_block</span><span class="o">.</span><span class="n">blocks</span> <span class="o">=</span> <span class="n">blocks_temp</span>
+            <span class="k">return</span> <span class="n">temp_block</span><span class="o">.</span><span class="n">__dict__</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span>
+            <span class="k">return</span> <span class="p">{</span><span class="n">x</span><span class="p">:</span> <span class="n">d</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span> <span class="k">if</span> <span class="n">d</span><span class="p">[</span><span class="n">x</span><span class="p">]}</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">generate_json</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">dict_tree</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_dict_tree</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">dict_tree</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">dump_json_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_json</span><span class="p">()</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">t</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">generate_percussion</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="n">hit_patterns</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">cymbal_patterns</span> <span class="o">=</span> <span class="p">[]):</span>
+    <span class="n">percussions</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;percussions&#39;</span><span class="p">,</span> <span class="n">channel</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">block_type</span> <span class="o">=</span> <span class="s1">&#39;complex&#39;</span><span class="p">,</span> <span class="n">number_of_bars</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">number_of_bars</span><span class="p">,</span> <span class="n">number_of_beats_per_bar</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">number_of_beats_per_bar</span><span class="p">)</span>
+    
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">hit_patterns</span><span class="p">)):</span>
+        <span class="n">percussion_hits</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;percussion_hits_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">pattern</span> <span class="o">=</span> <span class="n">hit_patterns</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">low_end</span> <span class="o">=</span> <span class="s1">&#39;B0&#39;</span><span class="p">,</span> <span class="n">high_end</span> <span class="o">=</span> <span class="s1">&#39;G1&#39;</span><span class="p">,</span> <span class="n">use_defaults</span> <span class="o">=</span> <span class="bp">False</span><span class="p">)</span>
+        <span class="n">percussions</span><span class="o">.</span><span class="n">blocks</span> <span class="o">=</span> <span class="n">percussions</span><span class="o">.</span><span class="n">blocks</span> <span class="o">+</span> <span class="p">[</span><span class="n">percussion_hits</span><span class="p">]</span>
+        
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cymbal_patterns</span><span class="p">)):</span> 
+        <span class="n">cymbal_hits</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;cymbal_hits_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">pattern</span> <span class="o">=</span> <span class="n">cymbal_patterns</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">low_end</span> <span class="o">=</span> <span class="s1">&#39;B0&#39;</span><span class="p">,</span> <span class="n">high_end</span> <span class="o">=</span> <span class="s1">&#39;G1&#39;</span><span class="p">,</span> <span class="n">use_defaults</span> <span class="o">=</span> <span class="bp">False</span><span class="p">)</span>
+        <span class="n">percussions</span><span class="o">.</span><span class="n">blocks</span><span class="o">=</span> <span class="n">percussions</span><span class="o">.</span><span class="n">blocks</span> <span class="o">+</span> <span class="p">[</span><span class="n">cymbal_hits</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">percussions</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

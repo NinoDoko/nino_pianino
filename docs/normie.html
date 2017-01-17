@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>normie.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>normie.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">random</span><span class="o">,</span> <span class="nn">json</span><span class="o">,</span> <span class="nn">os</span>
+
+
+<span class="n">nino_dir</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p>What the general scale for the shond should be - chosen randomly from this list. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="s1">&#39;song_scale&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s1">&#39;major&#39;</span><span class="p">,</span> <span class="s1">&#39;minor&#39;</span><span class="p">],</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p>How many segments the song has. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="s1">&#39;number_of_segments_range&#39;</span> <span class="p">:</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p>The range of BPMs for each segment. Chooses randomly for each segment. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="s1">&#39;bpm_range&#39;</span><span class="p">:</span> <span class="nb">range</span><span class="p">(</span><span class="mi">90</span><span class="p">,</span> <span class="mi">240</span><span class="p">,</span> <span class="mi">15</span><span class="p">),</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <p>A range for beats per bar for each segment. Will choose randomly. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="s1">&#39;beats_per_bar_range&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">9</span><span class="p">],</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <p>A range for how many chords each segment should have. Chooses randomly from this list. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="s1">&#39;chords_per_segment_range&#39;</span><span class="p">:</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      <p>A list containing the program numbers of instruments that should be used. The program will choose randomly from these. 
+       'instruments_range' : range(1, 20),
+        'instruments_range' : [1, 2, 7, 12, 15, 17, 24, 28, 34, 35, 36, 37, 39, 40, 41, 42, 45, 46, 69, 70], 
+       'instruments_range' : [1, 2, 4, 7, 26, 32, 33, 45, 46, 82],
+       'instruments_range' : [1, 2, 6, 7, 15, 16, 19, 20, 21, 22, 23, 24, 27, 29, 37, 38, 39, 40, 41, 42, 52, 57, 60, 67, 80, 81, 87], #for merlin; 19 is organ, 80 + 81 are techno
+       'segment_instruments_range' : [8, 9, 10, 13, 16, 17, 18, 22, 24, 25, 26, 28, 33, 34, 35, 36, 39, 41,43, 45, 46, 49, 53, 54, 56, 58, 60, 62, 63, 64, 65, 68, 69, 70, 71, 72, 73, 74, 76, 77, 78, 79, 82, 83, 85, ], # for merlin</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      <p>The number of instruments that will be active throughout the song. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="s1">&#39;number_of_song_instruments_range&#39;</span> <span class="p">:</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      <p>Number of main instruments per segment</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="s1">&#39;number_main_instruments&#39;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-10'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-10'>#</a>
+      </div>
+      <p>The bias_same_note chances for the main instruments. It's a list that is randomly chosen from. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="s1">&#39;main_instrument_bias_same_note&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-11'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-11'>#</a>
+      </div>
+      <p>How much louder the main instrument should be.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="s1">&#39;main_default_accent_offset&#39;</span> <span class="p">:</span> <span class="mi">20</span><span class="p">,</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-12'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-12'>#</a>
+      </div>
+      <p>The maximum pattern note length for the main instrument</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="s1">&#39;main_pattern_len_range&#39;</span> <span class="p">:</span> <span class="mi">2</span><span class="p">,</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-13'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-13'>#</a>
+      </div>
+      <p>Each segment will have a different accent from the previous, determined by a random value from this list. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="s1">&#39;accent_offset&#39;</span> <span class="p">:</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-14'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-14'>#</a>
+      </div>
+      <p>A list from accents from which segments will receive their base accent. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="s1">&#39;default_accent_range&#39;</span> <span class="p">:</span> <span class="nb">range</span><span class="p">(</span><span class="mi">70</span><span class="p">,</span> <span class="mi">85</span><span class="p">),</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-15'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-15'>#</a>
+      </div>
+      <p>Volume to be added to percussions. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="s1">&#39;percussion_accent_offset&#39;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-16'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-16'>#</a>
+      </div>
+      <p>Number of extra instruments per segment. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="s1">&#39;no_segment_instruments_range&#39;</span> <span class="p">:</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-17'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-17'>#</a>
+      </div>
+      <p>Instruments range for the segment specific instruments.
+       'segment_instruments_range' : range(1, 20),
+       'segment_instruments_range' : [1, 4, 10, 12, 24, 26, 32, 33, 34, 35, 41, 42, 45, 46, 58, 74, 75, 76, 78],</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-18'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-18'>#</a>
+      </div>
+      <p>Range for the number of bars per segment. Will choose randomly from this list. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="s1">&#39;number_segment_bars_range&#39;</span> <span class="p">:</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-19'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-19'>#</a>
+      </div>
+      <p>Accent range offset for instrument specific blocks. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="s1">&#39;block_default_accent_range&#39;</span> <span class="p">:</span>  <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-20'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-20'>#</a>
+      </div>
+      <p>A list of values for bias_same_note for specific instruments. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="s1">&#39;block_same_note_range&#39;</span> <span class="p">:</span>  <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-21'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-21'>#</a>
+      </div>
+      <p>Chance for each instrument to follow a pattern for the duration of the segment. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="s1">&#39;segment_instrument_pattern_chance&#39;</span> <span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-22'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-22'>#</a>
+      </div>
+      <p>Upper range for how long a pattern note can last. Should not be longer than the maximum amount of beats per bar for the instrument. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="s1">&#39;pattern_note_len_range&#39;</span> <span class="p">:</span>  <span class="mi">2</span><span class="p">,</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-23'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-23'>#</a>
+      </div>
+      <p>And the lower range for how long the note can last. Should not be less than 1. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="s1">&#39;pattern_note_min_len_range&#39;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-24'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-24'>#</a>
+      </div>
+      <p>List for possible values for the bias_same_note for percussions per segment. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="s1">&#39;percussion_bias_same_note&#39;</span> <span class="p">:</span> <span class="nb">range</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-25'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-25'>#</a>
+      </div>
+      <p>The same min and max values, but only for percussions. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="s1">&#39;pattern_percussion_min_len_range&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s1">&#39;pattern_percussion_max_len_range&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-26'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-26'>#</a>
+      </div>
+      <p>The dir where the songs are saved. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="s1">&#39;generate_dir&#39;</span> <span class="p">:</span>  <span class="n">nino_dir</span> <span class="o">+</span> <span class="s1">&#39;/nino_gen_14/&#39;</span><span class="p">,</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-27'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-27'>#</a>
+      </div>
+      <p>The file from which we get markov values. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="s1">&#39;markov_values&#39;</span> <span class="p">:</span> <span class="n">nino_dir</span> <span class="o">+</span> <span class="s1">&#39;/trainer/results.json&#39;</span><span class="p">,</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-28'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-28'>#</a>
+      </div>
+      <p>The directory for the soundfont. This is an example, and should be supplied for specific use cases. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="s1">&#39;soundfont&#39;</span> <span class="p">:</span>  <span class="n">nino_dir</span> <span class="o">+</span> <span class="s1">&#39;/soundfonts/orchestra_sf/SGM-V2.01.sf2&#39;</span><span class="p">,</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-29'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-29'>#</a>
+      </div>
+      <p>'/soundfonts/orchestra_sf/techno combo2.sf2',
+'/soundfonts/orchestra_sf/SGM-V2.01.sf2',
+'/soundfonts/orchestra_sf/merlin_gmv22.sf2',
+'/soundfonts/FluidR3_GM.sf2',</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-30'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-30'>#</a>
+      </div>
+      <p>The song generator will randomly repeat segments and then shuffle them. This is a range of the numbers of repeats for each segment. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="s1">&#39;segment_shuffle_range&#39;</span> <span class="p">:</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-31'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-31'>#</a>
+      </div>
+      <p>The script uses a specific function to generate a base default accent, but we may want to place an upper limit. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="s1">&#39;max_base_default_accent&#39;</span> <span class="p">:</span> <span class="mi">80</span><span class="p">,</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-32'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-32'>#</a>
+      </div>
+      <p>This variable basically specifies how often the randomly generated chords will contain a chord vastly different from the generic chord. For instance, how commonly a chord progression for a song in C major to contain a chord in F minor. Higher values mean more generic chords. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="s1">&#39;chord_exp_var&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-33'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-33'>#</a>
+      </div>
+      <p>We may want to have segments with few instruments and no drums. This is the percentage that there are drums if the number of instruments is below the defined treshold. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="s1">&#39;segment_percussion_chance&#39;</span><span class="p">:</span> <span class="mf">0.85</span><span class="p">,</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-34'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-34'>#</a>
+      </div>
+      <p>If there's less than this many instruments in a segment, there's a chance (defined above) that there will be no percussion for that segment. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="s1">&#39;skip_percussion_treshold&#39;</span> <span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+
+    <span class="p">}</span>
+
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">dir_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">dir_path</span> <span class="o">+</span> <span class="s1">&#39;/sample_config.json&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span> 
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+
+<span class="n">main</span><span class="p">()</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

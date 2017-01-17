@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>template_utils.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>template_utils.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">from</span> <span class="nn">music_models</span> <span class="kn">import</span> <span class="n">base_notes</span><span class="p">,</span> <span class="n">keys_diffs</span><span class="p">,</span> <span class="n">Key</span>
+<span class="kn">from</span> <span class="nn">generator</span> <span class="kn">import</span> <span class="n">gen_notes_for_key</span>
+
+<span class="n">chord_progressions</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;major&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;major&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="s1">&#39;major&#39;</span><span class="p">)],</span> <span class="c1"># I-IV-V (C-F-G)</span>
+    <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;major&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;major&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;major&#39;</span><span class="p">)],</span> <span class="c1"># I-V-II (C-G-D)</span>
+    <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;major&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="s1">&#39;minor&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="s1">&#39;major&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;minor&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;major&#39;</span><span class="p">)],</span> <span class="c1">#I-vi-VII-ii-II (C-Am-G-Dm-D)</span>
+    <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;major&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="s1">&#39;minor&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;minor&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="s1">&#39;major&#39;</span><span class="p">)],</span> <span class="c1">#I-vi-ii-V (C-Am-Dm-G)</span>
+    <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;major&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="s1">&#39;major&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;minor&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="s1">&#39;minor&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;major&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;minor&#39;</span><span class="p">)],</span> <span class="c1">#I-V-ii-vi-IV-iv (C-G-Dm-Am-F-Fm)</span>
+<span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">generate_pattern</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="n">min_note_len</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">max_note_len</span> <span class="o">=</span> <span class="mi">4</span><span class="p">):</span>
+    <span class="n">pattern_sum</span> <span class="o">=</span> <span class="n">block</span><span class="p">[</span><span class="s1">&#39;number_of_beats_per_bar&#39;</span><span class="p">]</span>
+    <span class="n">pattern</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">while</span> <span class="nb">sum</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">pattern_sum</span><span class="p">:</span>
+        <span class="n">pattern</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">min_note_len</span><span class="p">,</span> <span class="n">max_note_len</span><span class="p">),</span> <span class="n">pattern_sum</span> <span class="o">-</span> <span class="nb">sum</span><span class="p">(</span><span class="n">pattern</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">pattern</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">index_progression_to_notes</span><span class="p">(</span><span class="n">root_note</span><span class="p">,</span> <span class="n">progression</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[(</span><span class="n">base_notes</span><span class="p">[(</span><span class="n">root_note</span> <span class="o">+</span> <span class="n">chord</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">%</span><span class="nb">len</span><span class="p">(</span><span class="n">base_notes</span><span class="p">)],</span> <span class="n">chord</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">chord</span> <span class="ow">in</span> <span class="n">progression</span><span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p>You can pass root_note as either the index or the value of the note. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">generate_chord_progression</span><span class="p">(</span><span class="n">root_note</span><span class="p">):</span>
+    <span class="n">progression</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">chord_progressions</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">root_note</span> <span class="ow">in</span> <span class="n">base_notes</span><span class="p">:</span> 
+        <span class="n">root_note</span> <span class="o">=</span> <span class="n">base_notes</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">root_note</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p>Here we assume root_note is the index of the root note. 
+   progression = [(base_notes[(root_note + chord[0])%len(base_notes)], chord[1]) for chord in progression]</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">progression</span> <span class="o">=</span> <span class="n">index_progression_to_notes</span><span class="p">(</span><span class="n">root_note</span><span class="p">,</span> <span class="n">progression</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">progression</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">generate_random_chord_progression</span><span class="p">(</span><span class="n">root_note</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">number_of_chords</span><span class="p">,</span> <span class="n">scale_choices</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;major&#39;</span><span class="p">,</span> <span class="s1">&#39;minor&#39;</span><span class="p">],</span> <span class="n">markov_values</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">exp_var</span> <span class="o">=</span> <span class="mf">4.0</span><span class="p">):</span>
+    <span class="n">root_key</span> <span class="o">=</span> <span class="n">Key</span><span class="p">(</span><span class="n">root_note</span> <span class="o">=</span> <span class="n">root_note</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="n">scale</span><span class="p">)</span>
+    <span class="n">root_key_base</span> <span class="o">=</span> <span class="n">root_key</span><span class="o">.</span><span class="n">base_notes</span>
+
+    <span class="n">chord_notes</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">note</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">gen_notes_for_key</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">number_of_chords</span><span class="p">,</span> <span class="n">root_note</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">markov_values</span><span class="p">)]</span>
+    <span class="n">progression</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">all_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">Key</span><span class="p">(</span><span class="n">note</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span> <span class="k">for</span> <span class="n">note</span> <span class="ow">in</span> <span class="n">root_key</span><span class="o">.</span><span class="n">base_notes</span> <span class="k">for</span> <span class="n">scale</span> <span class="ow">in</span> <span class="n">scale_choices</span><span class="p">]</span>
+
+    <span class="n">keys_candidates_ctrs</span> <span class="o">=</span> <span class="p">[(</span><span class="n">key</span><span class="p">,</span> <span class="mf">0.0</span> <span class="o">+</span> <span class="nb">len</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">key</span><span class="o">.</span><span class="n">base_notes</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">root_key</span><span class="o">.</span><span class="n">base_notes</span><span class="p">])</span> <span class="o">**</span> <span class="n">exp_var</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">all_keys</span><span class="p">]</span>
+
+    <span class="n">key_candidates_probabilities</span> <span class="o">=</span> <span class="p">[(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="nb">sum</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">keys_candidates_ctrs</span><span class="p">]))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">keys_candidates_ctrs</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">key_candidates_probabilities</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="p">:</span>
+        <span class="k">print</span> <span class="s1">&#39;The sum is : &#39;</span><span class="p">,</span> <span class="nb">sum</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">key_candidates_probabilities</span><span class="p">)</span>
+
+    <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">progression</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">number_of_chords</span><span class="p">:</span> 
+        <span class="n">r</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(),</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">key_prob</span> <span class="ow">in</span> <span class="n">key_candidates_probabilities</span><span class="p">:</span>
+            <span class="n">s</span> <span class="o">+=</span> <span class="n">key_prob</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">s</span> <span class="o">&gt;=</span> <span class="n">r</span><span class="p">:</span> 
+                <span class="n">progression</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">key_prob</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">root_note</span><span class="p">,</span> <span class="n">key_prob</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scale</span><span class="p">))</span>
+                <span class="k">break</span>
+    <span class="k">return</span> <span class="n">progression</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">create_base_block</span><span class="p">(</span><span class="n">bpm</span> <span class="o">=</span> <span class="mi">120</span><span class="p">,</span> <span class="n">play_at</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;base&#39;</span><span class="p">,</span> <span class="n">track</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;bpm&#39;</span> <span class="p">:</span> <span class="n">bpm</span><span class="p">,</span> <span class="s1">&#39;play_at&#39;</span> <span class="p">:</span> <span class="n">play_at</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span> <span class="p">:</span> <span class="n">name</span><span class="p">,</span> <span class="s1">&#39;block_type&#39;</span> <span class="p">:</span> <span class="s1">&#39;complex&#39;</span><span class="p">,</span> <span class="s1">&#39;track&#39;</span> <span class="p">:</span> <span class="n">track</span><span class="p">,</span> <span class="s1">&#39;blocks&#39;</span> <span class="p">:</span> <span class="p">[]}</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">create_percussion</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="n">no_hits</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">no_cymbals</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="n">percussion_base</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;block_type&quot;</span><span class="p">:</span><span class="s2">&quot;complex&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;percussions&quot;</span><span class="p">,</span>  <span class="s2">&quot;track&quot;</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span> <span class="s2">&quot;channel&quot;</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span> <span class="s2">&quot;play_at&quot;</span><span class="p">:[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;number_of_beats_per_bar&quot;</span> <span class="p">:</span> <span class="n">block</span><span class="p">[</span><span class="s2">&quot;number_of_beats_per_bar&quot;</span><span class="p">],</span> <span class="s2">&quot;number_of_bars&quot;</span> <span class="p">:</span> <span class="n">block</span><span class="p">[</span><span class="s2">&quot;number_of_bars&quot;</span><span class="p">],</span> <span class="s2">&quot;blocks&quot;</span><span class="p">:</span> <span class="p">[]}</span> 
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">no_hits</span><span class="p">):</span>
+        <span class="n">percussion_base</span><span class="p">[</span><span class="s1">&#39;blocks&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;percussions_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span>
+            <span class="s2">&quot;play_at&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="s2">&quot;root_note&quot;</span><span class="p">:</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;scale&quot;</span><span class="p">:</span> <span class="s2">&quot;major&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;low_end&quot;</span><span class="p">:</span> <span class="s2">&quot;B0&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;high_end&quot;</span><span class="p">:</span> <span class="s2">&quot;G1&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;default_accent&quot;</span><span class="p">:</span> <span class="mi">80</span><span class="p">,</span> 
+        <span class="p">})</span>
+        <span class="n">no_hits</span> <span class="o">-=</span> <span class="mi">1</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">no_cymbals</span><span class="p">):</span>
+        <span class="n">percussion_base</span><span class="p">[</span><span class="s1">&#39;blocks&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;percussions_cymbals_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span>
+            <span class="s2">&quot;play_at&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="s2">&quot;base_notes&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s1">&#39;F#&#39;</span><span class="p">,</span> <span class="s1">&#39;F#&#39;</span><span class="p">,</span> <span class="s1">&#39;F#&#39;</span><span class="p">,</span> <span class="s1">&#39;F#&#39;</span><span class="p">,</span> <span class="s1">&#39;F#&#39;</span><span class="p">,</span> <span class="s1">&#39;G#&#39;</span><span class="p">,</span> <span class="s1">&#39;G#&#39;</span><span class="p">,</span> <span class="s1">&#39;G#&#39;</span><span class="p">,</span> <span class="s1">&#39;G#&#39;</span><span class="p">,</span> <span class="s1">&#39;A#&#39;</span><span class="p">,</span> <span class="s1">&#39;A#&#39;</span><span class="p">,</span> <span class="s1">&#39;C#&#39;</span><span class="p">,</span> <span class="s1">&#39;D#&#39;</span><span class="p">],</span>
+            <span class="s2">&quot;low_end&quot;</span><span class="p">:</span> <span class="s2">&quot;F#1&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;high_end&quot;</span><span class="p">:</span> <span class="s2">&quot;D#2&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;defualt_accent&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span> 
+        <span class="p">})</span>
+        <span class="n">no_hits</span> <span class="o">-=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">percussion_base</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      <p>chords is a list of (root_note, scale) pairs. For instance : [('A', 'minor'), ('C', 'major'), ('E', 'minor')]</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">create_chord_progression</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="n">chords</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">extra_kwargs</span> <span class="o">=</span> <span class="p">{}):</span>
+    <span class="n">no_beats</span> <span class="o">=</span> <span class="n">block</span><span class="p">[</span><span class="s1">&#39;number_of_beats_per_bar&#39;</span><span class="p">]</span>
+    <span class="n">no_bars</span> <span class="o">=</span> <span class="n">block</span><span class="p">[</span><span class="s1">&#39;number_of_bars&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">chords</span><span class="p">)</span>
+    <span class="n">blocks</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">chords</span><span class="p">)):</span> 
+        <span class="n">new_block</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;name&#39;</span> <span class="p">:</span> <span class="s1">&#39;gen_chord_&#39;</span> <span class="o">+</span> <span class="n">chords</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> 
+            <span class="s1">&#39;play_at&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="n">no_beats</span> <span class="o">*</span> <span class="n">no_bars</span><span class="p">],</span>
+            <span class="s1">&#39;root_note&#39;</span> <span class="p">:</span> <span class="n">chords</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> 
+            <span class="s1">&#39;scale&#39;</span> <span class="p">:</span> <span class="n">chords</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> 
+            <span class="s1">&#39;number_of_bars&#39;</span> <span class="p">:</span> <span class="n">no_bars</span><span class="p">,</span>
+            <span class="s1">&#39;number_of_beats_per_bar&#39;</span> <span class="p">:</span> <span class="n">block</span><span class="p">[</span><span class="s1">&#39;number_of_beats_per_bar&#39;</span><span class="p">]</span>
+        <span class="p">}</span>
+        <span class="k">for</span> <span class="n">kwarg</span> <span class="ow">in</span> <span class="n">extra_kwargs</span><span class="p">:</span> 
+            <span class="n">new_block</span><span class="p">[</span><span class="n">kwarg</span><span class="p">]</span> <span class="o">=</span> <span class="n">extra_kwargs</span><span class="p">[</span><span class="n">kwarg</span><span class="p">]</span>
+        <span class="n">blocks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_block</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">blocks</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">repeat_block</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="n">number_repeats</span><span class="p">,</span> <span class="n">number_of_bars</span><span class="p">):</span>
+    <span class="n">play_at</span> <span class="o">=</span> <span class="n">block</span><span class="p">[</span><span class="s1">&#39;play_at&#39;</span><span class="p">]</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">play_at</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">+=</span> <span class="p">[</span><span class="n">entry</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">entry</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;number_of_beats_per_bar&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">number_of_bars</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">number_repeats</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="n">result</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-10'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-10'>#</a>
+      </div>
+      <p>from sample_markov import markov_values
+generate_random_chord_progression('C', 'major', 5, markov_values = markov_values)</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>
