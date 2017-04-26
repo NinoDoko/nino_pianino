@@ -105,7 +105,7 @@ def main():
         'max_base_default_accent' : 80,
 
         #This variable basically specifies how often the randomly generated chords will contain a chord vastly different from the generic chord. For instance, how commonly a chord progression for a song in C major to contain a chord in F minor. Higher values mean more generic chords. 
-        'chord_exp_var': 4,
+        'chord_exp_var': 2,
 
         #We may want to have segments with few instruments and no drums. This is the percentage that there are drums if the number of instruments is below the defined treshold. 
         'segment_percussion_chance': 0.85,

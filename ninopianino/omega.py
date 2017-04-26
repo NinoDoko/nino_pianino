@@ -9,7 +9,7 @@ def main():
         'song_scale' : ['major', 'minor'],
 
         #How many segments the song has. 
-        'number_of_segments_range' : range(3, 6),
+        'number_of_segments_range' : range(5, 8),
     
         #The range of BPMs for each segment. Chooses randomly for each segment. 
         'bpm_range': range(150, 500, 15), 
@@ -27,10 +27,10 @@ def main():
         'number_repeats_range' : range(2, 5),
 
         #A list containing the program numbers of instruments that should be used. The program will choose randomly from these. 
-#        'instruments_range' :  [1, 2, 5, 24, 25, 36, 37, 45, 46], #Conservative
+        'instruments_range' :  [1, 2, 5, 24, 25, 36, 37, 45, 46], #Conservative
 
         #Instruments range for the segment specific instruments.
-#        'segment_instruments_range' : [5, 7, 8, 10, 12, 24, 26, 28, 32, 33, 34, 36, 39, 40, 45, 48, 70, 71, 72, 76] , #also conservative
+        'segment_instruments_range' : [5, 7, 8, 10, 12, 24, 26, 28, 32, 33, 34, 36, 39, 40, 45, 48, 70, 71, 72, 76] , #also conservative
 
         #The number of instruments that will be active throughout the song. 
         'number_of_song_instruments_range' : range(1, 3),

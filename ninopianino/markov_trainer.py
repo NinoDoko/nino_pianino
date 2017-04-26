@@ -18,6 +18,9 @@ def gen_kwargs():
 
         #How many segments the song has. 
         'number_of_segments_range' : [1],
+
+        'chord_exp_var': 2,
+
     
         #The range of BPMs for each segment. Chooses randomly for each segment. 
         'bpm_range': [400], 
@@ -111,4 +114,5 @@ def main():
         f.write(json.dumps(new_results))
 
 
-main()
+if __name__ == '__main__' : 
+    main()

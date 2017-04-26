@@ -36,4 +36,5 @@ def main():
         import traceback
         traceback.print_exc()
 
-main()
+if __name__ == '__main__': 
+    main()
