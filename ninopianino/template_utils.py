@@ -85,7 +85,7 @@ def create_percussion(block, no_hits = 1, no_cymbals = 1):
             "base_notes" : ['F#', 'F#', 'F#', 'F#', 'F#', 'G#', 'G#', 'G#', 'G#', 'A#', 'A#', 'C#', 'D#'],
             "low_end": "F#1",
             "high_end": "D#2",
-            "defualt_accent": 60, 
+            "default_accent": 60, 
         })
         no_hits -= 1
 

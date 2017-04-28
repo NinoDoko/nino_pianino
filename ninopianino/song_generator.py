@@ -69,9 +69,19 @@ def create_segment_percussion(segment, kwargs):
         block['default_accent'] = segment['default_accent'] + random.randint(-5, 5) + kwargs.get('percussion_accent_offset', 20)
     return percussion
 
+def get_instrument(program_number, instruments):
+    instrument = [x for x in instruments if x['program_number'] == program_number] or[None]
+    instrument = instrument[0]
+    if not instrument: 
+        instrument = {
+            'program_number' : program_number, 
+        }
+
+    return instrument
 
 
-def create_segment(segments, i, kwargs, song_instruments, song_chord, markov_values):
+
+def create_segment(segments, i, kwargs, song_instruments, song_chord, markov_values, instruments = {}):
     song_root_note = random.choice(template_utils.base_notes)
     segment = segments[i]
 
@@ -98,6 +108,7 @@ def create_segment(segments, i, kwargs, song_instruments, song_chord, markov_val
 
     segment_instruments_range = kwargs.get('segment_instruments_range', range(0, 90))
     segment_instruments = song_instruments + [random.choice(segment_instruments_range) for i in range(number_segment_instruments)]
+    segment_instruments = [get_instrument(segment_instrument, instruments) for segment_instrument in segment_instruments]
     print 'Instruments for ', segment['track'], ' are : ', segment_instruments
 
     chords = template_utils.generate_random_chord_progression(song_root_note, song_chord,  random.choice(kwargs.get('chords_per_segment_range', range(3, 8))), scale_choices = ['major', 'minor', 'blues'], markov_values = markov_values, exp_var = kwargs.get('chord_exp_var', 5))
@@ -117,8 +128,8 @@ def create_segment(segments, i, kwargs, song_instruments, song_chord, markov_val
             'low_end' : song_root_note + str(low_end), 
             'high_end' : song_root_note + str(high_end), 
             'channel' : segment_channel , 
-            'program_number' : segment_instruments[instrument], 
-            'default_accent' : segment['default_accent'] + random.choice(kwargs.get('block_default_accent_range', range(-5, 5))), 
+            'program_number' : segment_instruments[instrument]['program_number'], 
+            'default_accent' : segment_instruments[instrument].get('volume', segment['default_accent']) + random.choice(kwargs.get('block_default_accent_range', range(-5, 5))), 
             'bias_same_note' : random.choice(kwargs.get('block_same_note_range', range(10, 100, 15))), 
         }
         max_note_len = kwargs.get('pattern_note_max_len_range', 4)
@@ -142,6 +153,13 @@ def generate_song(**kwargs):
     song_chord = random.choice(kwargs.get('song_scale', ['major', 'minor']))
     number_of_segments = random.choice(kwargs.get('number_of_segments_range', random.randint(3, 7)))
     bpm_range = kwargs.get('bpm_range', range(150, 540, 15))
+
+    instruments_file = kwargs.get('instruments_file')
+    if not instruments_file: instruments = {}
+    else: 
+        with open(instruments_file) as f: 
+            instruments = json.loads(f.read())
+
     
     if kwargs.get('markov_values'):
         with open(kwargs['markov_values']) as f: 
@@ -153,12 +171,15 @@ def generate_song(**kwargs):
 
     number_of_instruments_range = kwargs.get('number_of_song_instruments_range', range(1, random.randint(1, 3)))
     number_of_instruments = random.choice(number_of_instruments_range)
-    song_instruments = [random.choice(kwargs.get('instruments_range', range(0, 90))) for i in range(number_of_instruments)]
+    if instruments: 
+        song_instruments = [random.choice(instruments)['program_number'] for i in range(number_of_instruments)]
+    else: 
+        song_instruments = [random.choice(kwargs.get('instruments_range', range(0, 90))) for i in range(number_of_instruments)]
     print 'Song instruments are : ', song_instruments
         
     for i in range(len(segments)):
 
-        create_segment(segments, i, kwargs, song_instruments, song_chord, markov_values)
+        create_segment(segments, i, kwargs, song_instruments, song_chord, markov_values, instruments = instruments)
 
     segments = shuffle_play_at(segments, kwargs.get('segment_shuffle_range', range(1, 3)))   
     print 'Generated segments are : '
